@@ -4,6 +4,11 @@
 	<groupId>com.gf</groupId>
 	<artifactId>collections</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	
+	<properties>
+		<!-- github server corresponds to entry in ~/.m2/settings.xml -->
+		<github.global.server>github</github.global.server>
+	</properties>
 
 	<distributionManagement>
 		<repository>
