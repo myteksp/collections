@@ -8,7 +8,7 @@ To include in your project
 ```xml
 <repositories>
 	<repository>
-		<id>persistance-mvn-repo</id>
+		<id>collections-mvn-repo</id>
 		<url>https://raw.github.com/myteksp/collections/mvn-repo/</url>
 			<snapshots>
 				<enabled>true</enabled>
