@@ -26,7 +26,6 @@ public final class GfCollections {
 		return result;
 	}
 
-
 	@SafeVarargs
 	public static final <T> GfCollection<T> asLinkedCollection(final T ...elements){
 		final GfCollection<T> result = new LinkedGfCollection<T>();
