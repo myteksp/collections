@@ -1,6 +1,7 @@
 package com.gf.collections;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -170,5 +171,10 @@ public class WreppedGfCollection<T> implements GfCollection<T>{
 	@Override
 	public String join() {
 		return GfCollections.join(this);
+	}
+	@Override
+	public GfCollection<T> sortCollection(Comparator<T> comparator) {
+		this.sort(comparator);
+		return this;
 	}
 }

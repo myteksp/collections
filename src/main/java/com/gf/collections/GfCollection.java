@@ -1,5 +1,6 @@
 package com.gf.collections;
 
+import java.util.Comparator;
 import java.util.List;
 
 import com.gf.collections.functions.FilterFunction;
@@ -15,4 +16,5 @@ public interface GfCollection<T> extends List<T>{
 	public String join(final ToStringFunction<T> stringifier, final String on);
 	public String join(final ToStringFunction<T> stringifier);
 	public String join();
+	public GfCollection<T> sortCollection(final Comparator<T> comparator);
 }

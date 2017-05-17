@@ -1,5 +1,6 @@
 package com.gf.collections;
 
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -47,5 +48,10 @@ public class LinkedGfCollection<T> extends LinkedList<T> implements GfCollection
 	@Override
 	public String join() {
 		return GfCollections.join(this);
+	}
+	@Override
+	public GfCollection<T> sortCollection(Comparator<T> comparator) {
+		this.sort(comparator);
+		return this;
 	}
 }

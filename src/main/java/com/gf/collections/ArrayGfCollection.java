@@ -1,6 +1,7 @@
 package com.gf.collections;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import com.gf.collections.functions.FilterFunction;
@@ -47,5 +48,10 @@ public class ArrayGfCollection<T> extends ArrayList<T> implements GfCollection<T
 	@Override
 	public String join() {
 		return GfCollections.join(this);
+	}
+	@Override
+	public GfCollection<T> sortCollection(Comparator<T> comparator) {
+		this.sort(comparator);
+		return this;
 	}
 }
