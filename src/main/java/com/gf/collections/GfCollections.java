@@ -59,6 +59,65 @@ public final class GfCollections {
 		result.addAll(collection);
 		return result;
 	}
+	
+	public static final <T> GfCollection<T> find(final GfCollection<T> input, final FilterFunction<T> seeker){
+		final GfCollection<T> result;
+		if (input instanceof ArrayGfCollection){
+			result = new ArrayGfCollection<T>(input.size());
+		}else if (input instanceof LinkedGfCollection){
+			result = new LinkedGfCollection<T>();
+		}else if (input instanceof WreppedGfCollection){
+			result = new LinkedGfCollection<T>();
+		}else{
+			throw new RuntimeException("Not supported collection type.");
+		}
+		for(final T in : input) 
+			if (seeker.filter(in))
+				result.add(in);
+		
+		return result;
+	}
+	public static final <T> GfCollection<T> find(final GfCollection<T> input, final FilterFunction<T> seeker, final int limit){
+		final GfCollection<T> result;
+		if (input instanceof ArrayGfCollection){
+			result = new ArrayGfCollection<T>(input.size());
+		}else if (input instanceof LinkedGfCollection){
+			result = new LinkedGfCollection<T>();
+		}else if (input instanceof WreppedGfCollection){
+			result = new LinkedGfCollection<T>();
+		}else{
+			throw new RuntimeException("Not supported collection type.");
+		}
+		for(final T in : input) 
+			if (seeker.filter(in)) {
+				result.add(in);
+				if (result.size() >= limit)
+					break;
+			}
+		
+		return result;
+	}
+	
+	public static final <T> T findFirst(final GfCollection<T> input, final FilterFunction<T> seeker){
+		for(final T in : input) 
+			if (seeker.filter(in))
+				return in;
+		
+		return null;
+	}
+	
+	public static final <T> T findLast(final GfCollection<T> input, final FilterFunction<T> seeker) {
+		final int last = input.size() - 1;
+		if (last < 0)
+			return null;
+		
+		for (int i = last; i > -1; i--) {
+			final T in = input.get(i);
+			if (seeker.filter(in))
+				return in;
+		}
+		return null;
+	}
 
 	public static final <I, O> GfCollection<O> map(final GfCollection<I> input, final MapFunction<I, O> mapper){
 		final GfCollection<O> result;

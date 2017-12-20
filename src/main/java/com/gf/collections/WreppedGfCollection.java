@@ -177,4 +177,20 @@ public class WreppedGfCollection<T> implements GfCollection<T>{
 		this.sort(comparator);
 		return this;
 	}
+	@Override
+	public GfCollection<T> find(FilterFunction<T> seeker) {
+		return GfCollections.find(this, seeker);
+	}
+	@Override
+	public GfCollection<T> find(FilterFunction<T> seeker, int limit) {
+		return GfCollections.find(this, seeker, limit);
+	}
+	@Override
+	public T findFirst(FilterFunction<T> seeker) {
+		return GfCollections.findFirst(this, seeker);
+	}
+	@Override
+	public T findLast(FilterFunction<T> seeker) {
+		return GfCollections.findLast(this, seeker);
+	}
 }
