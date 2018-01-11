@@ -123,16 +123,19 @@ public final class GfCollections {
 		final GfCollection<O> result;
 		if (input instanceof ArrayGfCollection){
 			result = new ArrayGfCollection<O>(input.size());
+			for (int i = 0; i < input.size(); i++) 
+				result.add(i, mapper.map(input.get(i)));
 		}else if (input instanceof LinkedGfCollection){
 			result = new LinkedGfCollection<O>();
+			for(final I inp : input)
+				result.add(mapper.map(inp));
 		}else if (input instanceof WreppedGfCollection){
 			result = new LinkedGfCollection<O>();
+			for(final I inp : input)
+				result.add(mapper.map(inp));
 		}else{
 			throw new RuntimeException("Not supported collection type.");
 		}
-
-		for(final I inp : input)
-			result.add(mapper.map(inp));
 
 		return result;
 	}
