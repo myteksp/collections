@@ -2,6 +2,7 @@ package com.gf.collections;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Consumer;
 
 import com.gf.collections.functions.FilterFunction;
 import com.gf.collections.functions.FlatMapFunction;
@@ -19,6 +20,8 @@ public interface GfCollection<T> extends List<T>{
 	public GfCollection<T> sortCollection(final Comparator<T> comparator);
 	public GfCollection<T> find(final FilterFunction<T> seeker);
 	public GfCollection<T> find(final FilterFunction<T> seeker, final int limit);
-	public T findFirst(final FilterFunction<T> seeker);
-	public T findLast(final FilterFunction<T> seeker);
+	public GfCollection<T> findFirst(final Consumer<T> seeker);
+	public GfCollection<T> findLast(final Consumer<T> seeker);
+	public T findFirst();
+	public T findLast();
 }

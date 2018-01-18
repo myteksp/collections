@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.function.Consumer;
 
 import com.gf.collections.functions.FilterFunction;
 import com.gf.collections.functions.FlatMapFunction;
@@ -186,11 +187,21 @@ public class WreppedGfCollection<T> implements GfCollection<T>{
 		return GfCollections.find(this, seeker, limit);
 	}
 	@Override
-	public T findFirst(FilterFunction<T> seeker) {
-		return GfCollections.findFirst(this, seeker);
+	public GfCollection<T> findFirst(Consumer<T> seeker) {
+		final T res = GfCollections.findFirst(this);
+		return res == null?GfCollections.asLinkedCollection():GfCollections.asArrayCollection(res);
 	}
 	@Override
-	public T findLast(FilterFunction<T> seeker) {
-		return GfCollections.findLast(this, seeker);
+	public GfCollection<T> findLast(Consumer<T> seeker) {
+		final T res = GfCollections.findLast(this);
+		return res == null?GfCollections.asLinkedCollection():GfCollections.asArrayCollection(res);
+	}
+	@Override
+	public T findFirst() {
+		return GfCollections.findFirst(this);
+	}
+	@Override
+	public T findLast() {
+		return GfCollections.findLast(this);
 	}
 }

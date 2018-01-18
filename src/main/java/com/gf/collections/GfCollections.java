@@ -49,7 +49,7 @@ public final class GfCollections {
 
 		return result;
 	}
-	
+
 	public static final <T> GfCollection<T> wrapAsCollection(final List<T> list){
 		return new WreppedGfCollection<T>(list);
 	}
@@ -59,7 +59,7 @@ public final class GfCollections {
 		result.addAll(collection);
 		return result;
 	}
-	
+
 	public static final <T> GfCollection<T> find(final GfCollection<T> input, final FilterFunction<T> seeker){
 		final GfCollection<T> result;
 		if (input instanceof ArrayGfCollection){
@@ -74,7 +74,7 @@ public final class GfCollections {
 		for(final T in : input) 
 			if (seeker.filter(in))
 				result.add(in);
-		
+
 		return result;
 	}
 	public static final <T> GfCollection<T> find(final GfCollection<T> input, final FilterFunction<T> seeker, final int limit){
@@ -94,29 +94,23 @@ public final class GfCollections {
 				if (result.size() >= limit)
 					break;
 			}
-		
+
 		return result;
 	}
-	
-	public static final <T> T findFirst(final GfCollection<T> input, final FilterFunction<T> seeker){
-		for(final T in : input) 
-			if (seeker.filter(in))
-				return in;
-		
+
+	public static final <T> T findFirst(final GfCollection<T> input){
+		if (input.size() > 0)
+			return input.get(0);
+
 		return null;
 	}
-	
-	public static final <T> T findLast(final GfCollection<T> input, final FilterFunction<T> seeker) {
+
+	public static final <T> T findLast(final GfCollection<T> input) {
 		final int last = input.size() - 1;
 		if (last < 0)
 			return null;
-		
-		for (int i = last; i > -1; i--) {
-			final T in = input.get(i);
-			if (seeker.filter(in))
-				return in;
-		}
-		return null;
+
+		return input.get(last);
 	}
 
 	public static final <I, O> GfCollection<O> map(final GfCollection<I> input, final MapFunction<I, O> mapper){
