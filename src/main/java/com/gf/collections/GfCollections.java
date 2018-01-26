@@ -1,6 +1,5 @@
 package com.gf.collections;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -8,6 +7,8 @@ import com.gf.collections.functions.FilterFunction;
 import com.gf.collections.functions.FlatMapFunction;
 import com.gf.collections.functions.MapFunction;
 import com.gf.collections.functions.ToStringFunction;
+import com.gf.collections.iter.CollectionConsumer;
+import com.gf.collections.iter.CollectionIterator;
 
 public final class GfCollections {	
 
@@ -71,9 +72,13 @@ public final class GfCollections {
 		}else{
 			throw new RuntimeException("Not supported collection type.");
 		}
-		for(final T in : input) 
-			if (seeker.filter(in))
-				result.add(in);
+		CollectionIterator.iterate(input, new CollectionConsumer<T>() {
+			@Override
+			public final void consume(final T in, final int index) {
+				if (seeker.filter(in))
+					result.add(in);
+			}
+		});
 
 		return result;
 	}
@@ -88,14 +93,24 @@ public final class GfCollections {
 		}else{
 			throw new RuntimeException("Not supported collection type.");
 		}
-		for(final T in : input) 
-			if (seeker.filter(in)) {
-				result.add(in);
-				if (result.size() >= limit)
-					break;
-			}
+		try {
+			CollectionIterator.iterate(input, new CollectionConsumer<T>() {
+				@Override
+				public final void consume(final T in, final int index) {
+					if (seeker.filter(in)) {
+						result.add(in);
+						if (result.size() >= limit)
+							throw new BreakException();
+					}
+				}
+			});
+		}catch(final BreakException e) {}
 
 		return result;
+	}
+
+	private static final class BreakException extends RuntimeException{
+		private static final long serialVersionUID = -7906960248612245072L;
 	}
 
 	public static final <T> T findFirst(final GfCollection<T> input){
@@ -117,16 +132,28 @@ public final class GfCollections {
 		final GfCollection<O> result;
 		if (input instanceof ArrayGfCollection){
 			result = new ArrayGfCollection<O>(input.size());
-			for (int i = 0; i < input.size(); i++) 
-				result.add(i, mapper.map(input.get(i)));
+			CollectionIterator.iterate(input, new CollectionConsumer<I>() {
+				@Override
+				public final void consume(final I in, final int index) {
+					result.add(index, mapper.map(in));
+				}
+			});
 		}else if (input instanceof LinkedGfCollection){
 			result = new LinkedGfCollection<O>();
-			for(final I inp : input)
-				result.add(mapper.map(inp));
+			CollectionIterator.iterate(input, new CollectionConsumer<I>() {
+				@Override
+				public final void consume(final I in, final int index) {
+					result.add(mapper.map(in));
+				}
+			});
 		}else if (input instanceof WreppedGfCollection){
 			result = new LinkedGfCollection<O>();
-			for(final I inp : input)
-				result.add(mapper.map(inp));
+			CollectionIterator.iterate(input, new CollectionConsumer<I>() {
+				@Override
+				public final void consume(final I in, final int index) {
+					result.add(mapper.map(in));
+				}
+			});
 		}else{
 			throw new RuntimeException("Not supported collection type.");
 		}
@@ -134,23 +161,38 @@ public final class GfCollections {
 		return result;
 	}
 
+	private static final class WrappedInt{
+		public int value;
+		public WrappedInt() {
+			this.value = 0;
+		}
+	}
+
 	public static final <I, O> GfCollection<O> flatMap(final GfCollection<I> input, final FlatMapFunction<I, O> mapper){
 		if (input instanceof ArrayGfCollection){
-			final List<List<O>> results = new ArrayList<List<O>>(input.size());
-			int len = 0;
-			for(final I inp : input){
-				final List<O> flat = mapper.flatMap(inp);
-				len += flat.size();
-				results.add(flat);
-			}
-
-			final GfCollection<O> result = new ArrayGfCollection<O>(len);
-
-			for(final List<O> flat : results)
-				for(final O out: flat)
+			final GfCollection<GfCollection<O>> results = new ArrayGfCollection<GfCollection<O>>(input.size());
+			final WrappedInt len = new WrappedInt();
+			CollectionIterator.iterate(input, new CollectionConsumer<I>() {
+				@Override
+				public final void consume(final I in, final int index) {
+					final GfCollection<O> flat = wrapAsCollection(mapper.flatMap(in));
+					len.value += flat.size();
+					results.add(flat);
+				}
+			});
+			final GfCollection<O> result = new ArrayGfCollection<O>(len.value);
+			final CollectionConsumer<O> innerConsumer = new CollectionConsumer<O>() {
+				@Override
+				public final void consume(final O out, final int index) {
 					result.add(out);
-
-
+				}
+			};
+			CollectionIterator.iterate(results, new CollectionConsumer<GfCollection<O>>() {
+				@Override
+				public final void consume(final GfCollection<O> flat, final int index) {
+					CollectionIterator.iterate(flat, innerConsumer);
+				}
+			});
 			return result;
 		}else if (input instanceof LinkedGfCollection){
 			final GfCollection<O> result = new LinkedGfCollection<O>();
@@ -160,11 +202,29 @@ public final class GfCollections {
 
 			return result;
 		}else if (input instanceof WreppedGfCollection){
-			final GfCollection<O> result = new LinkedGfCollection<O>();
-			for(final I inp : input)
-				for(final O f : mapper.flatMap(inp))
-					result.add(f);
-
+			final GfCollection<GfCollection<O>> results = new ArrayGfCollection<GfCollection<O>>(input.size());
+			final WrappedInt len = new WrappedInt();
+			CollectionIterator.iterate(input, new CollectionConsumer<I>() {
+				@Override
+				public final void consume(final I in, final int index) {
+					final GfCollection<O> flat = wrapAsCollection(mapper.flatMap(in));
+					len.value += flat.size();
+					results.add(flat);
+				}
+			});
+			final GfCollection<O> result = new ArrayGfCollection<O>(len.value);
+			final CollectionConsumer<O> innerConsumer = new CollectionConsumer<O>() {
+				@Override
+				public final void consume(final O out, final int index) {
+					result.add(out);
+				}
+			};
+			CollectionIterator.iterate(results, new CollectionConsumer<GfCollection<O>>() {
+				@Override
+				public final void consume(final GfCollection<O> flat, final int index) {
+					CollectionIterator.iterate(flat, innerConsumer);
+				}
+			});
 			return result;
 		}else{
 			throw new RuntimeException("Not supported collection type.");
@@ -182,10 +242,13 @@ public final class GfCollections {
 		}else{
 			throw new RuntimeException("Not supported collection type.");
 		}
-
-		for(final T inp : input)
-			if (filter.filter(inp))
-				result.add(inp);
+		CollectionIterator.iterate(input, new CollectionConsumer<T>() {
+			@Override
+			public final void consume(final T in, final int index) {
+				if (filter.filter(in))
+					result.add(in);
+			}
+		});
 
 		return result;
 	}

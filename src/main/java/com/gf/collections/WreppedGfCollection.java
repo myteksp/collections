@@ -11,6 +11,8 @@ import com.gf.collections.functions.FilterFunction;
 import com.gf.collections.functions.FlatMapFunction;
 import com.gf.collections.functions.MapFunction;
 import com.gf.collections.functions.ToStringFunction;
+import com.gf.collections.iter.CollectionConsumer;
+import com.gf.collections.iter.CollectionIterator;
 
 public class WreppedGfCollection<T> implements GfCollection<T>{
 	
@@ -203,5 +205,14 @@ public class WreppedGfCollection<T> implements GfCollection<T>{
 	@Override
 	public T findLast() {
 		return GfCollections.findLast(this);
+	}
+	@Override
+	public void forEach(Consumer<? super T> action) {
+		CollectionIterator.iterate(this, new CollectionConsumer<T>() {
+			@Override
+			public final void consume(final T element, final int index) {
+				action.accept(element);
+			}
+		});
 	}
 }
