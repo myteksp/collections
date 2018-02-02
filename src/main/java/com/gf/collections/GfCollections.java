@@ -21,8 +21,10 @@ public final class GfCollections {
 		return result;
 	}
 
-	public static final <T> GfCollection<T> asCollection(final Collection<T> collection){
+	public static final <T> GfCollection<T> asCollection(final Collection<T> collection){	
 		final GfCollection<T> result = new LinkedGfCollection<T>();
+		if (collection == null)
+			return result;
 		result.addAll(collection);	
 		return result;
 	}
@@ -38,6 +40,8 @@ public final class GfCollections {
 
 	public static final <T> GfCollection<T> asLinkedCollection(final Collection<T> collection){
 		final GfCollection<T> result = new LinkedGfCollection<T>();
+		if (collection == null)
+			return result;
 		result.addAll(collection);
 		return result;
 	}
@@ -52,10 +56,14 @@ public final class GfCollections {
 	}
 
 	public static final <T> GfCollection<T> wrapAsCollection(final List<T> list){
+		if (list == null)
+			return new LinkedGfCollection<T>();
 		return new WreppedGfCollection<T>(list);
 	}
 
 	public static final <T> GfCollection<T> asArrayCollection(final Collection<T> collection){
+		if (collection == null)
+			return new ArrayGfCollection<T>();
 		final GfCollection<T> result = new ArrayGfCollection<T>(collection.size());
 		result.addAll(collection);
 		return result;
