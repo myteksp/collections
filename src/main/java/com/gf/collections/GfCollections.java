@@ -3,6 +3,7 @@ package com.gf.collections;
 import java.util.Collection;
 import java.util.List;
 
+import com.gf.collections.functions.Action;
 import com.gf.collections.functions.FilterFunction;
 import com.gf.collections.functions.FlatMapFunction;
 import com.gf.collections.functions.MapFunction;
@@ -261,7 +262,10 @@ public final class GfCollections {
 		return result;
 	}
 
-
+	public static final <T> GfCollection<T> action(final GfCollection<T> input, final Action<T> act){
+		act.onAction(input);
+		return input;
+	}
 
 	public static final <T> String join(final GfCollection<T> input){
 		return join(input, new ToStringFunction<T>() {

@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 
+import com.gf.collections.functions.Action;
 import com.gf.collections.functions.FilterFunction;
 import com.gf.collections.functions.FlatMapFunction;
 import com.gf.collections.functions.MapFunction;
@@ -24,4 +25,5 @@ public interface GfCollection<T> extends List<T>{
 	public GfCollection<T> findLast(final Consumer<T> seeker);
 	public T findFirst();
 	public T findLast();
+	public GfCollection<T> action(final Action<T> seeker);
 }

@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 
+import com.gf.collections.functions.Action;
 import com.gf.collections.functions.FilterFunction;
 import com.gf.collections.functions.FlatMapFunction;
 import com.gf.collections.functions.MapFunction;
@@ -91,5 +92,9 @@ public class ArrayGfCollection<T> extends ArrayList<T> implements GfCollection<T
 				action.accept(element);
 			}
 		});
+	}
+	@Override
+	public GfCollection<T> action(Action<T> action) {
+		return GfCollections.action(this, action);
 	}
 }
