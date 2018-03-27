@@ -97,4 +97,9 @@ public class ArrayGfCollection<T> extends ArrayList<T> implements GfCollection<T
 	public GfCollection<T> action(Action<T> action) {
 		return GfCollections.action(this, action);
 	}
+	@Override
+	public GfCollection<T> iterate(CollectionConsumer<T> consumer) {
+		CollectionIterator.iterate(this, consumer);
+		return this;
+	}
 }

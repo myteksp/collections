@@ -97,4 +97,9 @@ public class LinkedGfCollection<T> extends LinkedList<T> implements GfCollection
 	public GfCollection<T> action(Action<T> action) {
 		return GfCollections.action(this, action);
 	}
+	@Override
+	public GfCollection<T> iterate(CollectionConsumer<T> consumer) {
+		CollectionIterator.iterate(this, consumer);
+		return this;
+	}
 }

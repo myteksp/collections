@@ -9,6 +9,7 @@ import com.gf.collections.functions.FilterFunction;
 import com.gf.collections.functions.FlatMapFunction;
 import com.gf.collections.functions.MapFunction;
 import com.gf.collections.functions.ToStringFunction;
+import com.gf.collections.iter.CollectionConsumer;
 
 public interface GfCollection<T> extends List<T>{
 	public <O> GfCollection<O> map(final MapFunction<T, O> map);
@@ -25,5 +26,6 @@ public interface GfCollection<T> extends List<T>{
 	public GfCollection<T> findLast(final Consumer<T> seeker);
 	public T findFirst();
 	public T findLast();
-	public GfCollection<T> action(final Action<T> seeker);
+	public GfCollection<T> action(final Action<T> action);
+	public GfCollection<T> iterate(final CollectionConsumer<T> consumer);
 }
