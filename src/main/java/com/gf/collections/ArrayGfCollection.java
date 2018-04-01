@@ -3,11 +3,13 @@ package com.gf.collections;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import com.gf.collections.functions.Action;
 import com.gf.collections.functions.FilterFunction;
 import com.gf.collections.functions.FlatMapFunction;
+import com.gf.collections.functions.Getter;
 import com.gf.collections.functions.MapFunction;
 import com.gf.collections.functions.ToStringFunction;
 import com.gf.collections.iter.CollectionConsumer;
@@ -101,5 +103,9 @@ public class ArrayGfCollection<T> extends ArrayList<T> implements GfCollection<T
 	public GfCollection<T> iterate(CollectionConsumer<T> consumer) {
 		CollectionIterator.iterate(this, consumer);
 		return this;
+	}
+	@Override
+	public <O> Map<O, GfCollection<T>> groupBy(Getter<T, O> getter) {
+		return GfCollections.groupBy(this, getter);
 	}
 }

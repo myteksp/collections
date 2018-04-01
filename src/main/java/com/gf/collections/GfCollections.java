@@ -1,11 +1,14 @@
 package com.gf.collections;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.gf.collections.functions.Action;
 import com.gf.collections.functions.FilterFunction;
 import com.gf.collections.functions.FlatMapFunction;
+import com.gf.collections.functions.Getter;
 import com.gf.collections.functions.MapFunction;
 import com.gf.collections.functions.ToStringFunction;
 import com.gf.collections.iter.CollectionConsumer;
@@ -69,18 +72,28 @@ public final class GfCollections {
 		result.addAll(collection);
 		return result;
 	}
+	
+	public static final <T, O> Map<O, GfCollection<T>> groupBy(
+			final GfCollection<T> input, 
+			final Getter<T, O> getter) {
+		final Map<O, GfCollection<T>> res = new HashMap<O, GfCollection<T>>(input.size());
+		input.iterate(new CollectionConsumer<T>() {
+			@Override
+			public final void consume(final T element, final int index) {
+				final O key = getter.get(element);
+				GfCollection<T> col = res.get(key);
+				if (col == null) {
+					col = new LinkedGfCollection<T>();
+					res.put(key, col);
+				}
+				col.add(element);
+			}
+		});
+		return res;
+	}
 
 	public static final <T> GfCollection<T> find(final GfCollection<T> input, final FilterFunction<T> seeker){
-		final GfCollection<T> result;
-		if (input instanceof ArrayGfCollection){
-			result = new ArrayGfCollection<T>(input.size());
-		}else if (input instanceof LinkedGfCollection){
-			result = new LinkedGfCollection<T>();
-		}else if (input instanceof WreppedGfCollection){
-			result = new LinkedGfCollection<T>();
-		}else{
-			throw new RuntimeException("Not supported collection type.");
-		}
+		final GfCollection<T> result = new LinkedGfCollection<T>();
 		CollectionIterator.iterate(input, new CollectionConsumer<T>() {
 			@Override
 			public final void consume(final T in, final int index) {
