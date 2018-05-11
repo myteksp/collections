@@ -3,7 +3,6 @@ package com.gf.collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
 import com.gf.collections.functions.Action;
@@ -11,6 +10,7 @@ import com.gf.collections.functions.FilterFunction;
 import com.gf.collections.functions.FlatMapFunction;
 import com.gf.collections.functions.Getter;
 import com.gf.collections.functions.MapFunction;
+import com.gf.collections.functions.Reducer;
 import com.gf.collections.functions.ToStringFunction;
 import com.gf.collections.iter.CollectionConsumer;
 import com.gf.collections.iter.CollectionIterator;
@@ -105,7 +105,11 @@ public class LinkedGfCollection<T> extends LinkedList<T> implements GfCollection
 		return this;
 	}
 	@Override
-	public <O> Map<O, GfCollection<T>> groupBy(Getter<T, O> getter) {
+	public <O> GfMap<O, GfCollection<T>> groupBy(Getter<T, O> getter) {
 		return GfCollections.groupBy(this, getter);
+	}
+	@Override
+	public T reduce(Reducer<T> reducer) {
+		return GfCollections.reduce(this, reducer);
 	}
 }

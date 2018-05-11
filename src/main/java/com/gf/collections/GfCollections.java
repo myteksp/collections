@@ -1,15 +1,15 @@
 package com.gf.collections;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import com.gf.collections.functions.Action;
 import com.gf.collections.functions.FilterFunction;
 import com.gf.collections.functions.FlatMapFunction;
 import com.gf.collections.functions.Getter;
 import com.gf.collections.functions.MapFunction;
+import com.gf.collections.functions.Reducer;
 import com.gf.collections.functions.ToStringFunction;
 import com.gf.collections.iter.CollectionConsumer;
 import com.gf.collections.iter.CollectionIterator;
@@ -72,11 +72,11 @@ public final class GfCollections {
 		result.addAll(collection);
 		return result;
 	}
-	
-	public static final <T, O> Map<O, GfCollection<T>> groupBy(
+
+	public static final <T, O> GfMap<O, GfCollection<T>> groupBy(
 			final GfCollection<T> input, 
 			final Getter<T, O> getter) {
-		final Map<O, GfCollection<T>> res = new HashMap<O, GfCollection<T>>(input.size());
+		final GfMap<O, GfCollection<T>> res = new GfHashMap<O, GfCollection<T>>(input.size());
 		input.iterate(new CollectionConsumer<T>() {
 			@Override
 			public final void consume(final T element, final int index) {
@@ -322,5 +322,49 @@ public final class GfCollections {
 
 		sb.append(suffix);
 		return sb.toString();
+	}
+
+	public static final <K, V> GfCollection<K> collectKeys(final GfHashMap<K, V> map){
+		final Set<K> set = map.keySet();
+		final int len = set.size();
+		final ArrayGfCollection<K> res = new ArrayGfCollection<K>(len);
+		for(final K k : set) 
+			res.add(k);
+
+		return res;
+	}
+
+	public static final <K, V> GfCollection<V> collectValues(final GfHashMap<K, V> map){
+		final Collection<V> col = map.values();
+		final int len = col.size();
+		final ArrayGfCollection<V> res = new ArrayGfCollection<V>(len);
+		for(final V v : col) 
+			res.add(v);
+
+		return res;
+	}
+
+	public static final <T> T reduce(final GfCollection<T> src, final Reducer<T> reducer) {
+		switch(src.size()) {
+		case 0:
+			return null;
+		case 1:
+			return src.get(0);
+		default:
+			final T first = src.get(0);
+			src.iterate(new CollectionConsumer<T>() {
+				private Reducer<T> r = new Reducer<T>() {
+					@Override
+					public final void reduce(final T result, final T element, final int index) {
+						r = reducer;
+					}
+				};
+				@Override
+				public final void consume(final T element, final int index) {
+					r.reduce(first, element, index);
+				}
+			});
+			return first;
+		}
 	}
 }
