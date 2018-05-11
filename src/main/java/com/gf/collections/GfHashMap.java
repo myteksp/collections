@@ -29,6 +29,11 @@ public final class GfHashMap<K, V> extends HashMap<K, V> implements GfMap<K, V>{
 	public GfCollection<V> collectValues() {
 		return GfCollections.collectValues(this);
 	}
+	
+	@Override
+	public GfCollection<Entry<K, V>> collectEntries() {
+		return GfCollections.collectEntries(this);
+	}
 
 	@Override
 	public <R> GfCollection<R> mapKeys(MapFunction<K, R> map) {

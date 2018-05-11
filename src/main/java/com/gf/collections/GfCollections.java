@@ -3,6 +3,7 @@ package com.gf.collections;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import com.gf.collections.functions.Action;
 import com.gf.collections.functions.FilterFunction;
@@ -340,6 +341,16 @@ public final class GfCollections {
 		final ArrayGfCollection<V> res = new ArrayGfCollection<V>(len);
 		for(final V v : col) 
 			res.add(v);
+
+		return res;
+	}
+	
+	public static final <K, V> GfCollection<Entry<K, V>> collectEntries(final GfHashMap<K, V> map){
+		final Set<Entry<K, V>> set = map.entrySet();
+		final int len = set.size();
+		final ArrayGfCollection<Entry<K, V>> res = new ArrayGfCollection<Entry<K, V>>(len);
+		for(final Entry<K, V> e : set) 
+			res.add(e);
 
 		return res;
 	}
