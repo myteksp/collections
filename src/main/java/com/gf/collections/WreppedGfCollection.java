@@ -236,4 +236,20 @@ public class WreppedGfCollection<T> implements GfCollection<T>{
 	public T reduce(Reducer<T> reducer) {
 		return GfCollections.reduce(this, reducer);
 	}
+	@Override
+	public GfCollection<T> take(final int n) {
+		return GfCollections.takeFromStart(this, n);
+	}
+	@Override
+	public GfCollection<T> takeFromBegining(final int n) {
+		return GfCollections.takeFromStart(this, n);
+	}
+	@Override
+	public GfCollection<T> takeFromEnd(final int n) {
+		return GfCollections.takeFromEnd(this, n);
+	}
+	@Override
+	public GfCollection<T> takeRandom(final int n) {
+		return GfCollections.takeRandom(this, n);
+	}
 }

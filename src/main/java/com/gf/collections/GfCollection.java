@@ -32,4 +32,8 @@ public interface GfCollection<T> extends List<T>{
 	public GfCollection<T> iterate(final CollectionConsumer<T> consumer);
 	public <O> GfMap<O, GfCollection<T>> groupBy(final Getter<T,O> getter);
 	public T reduce(final Reducer<T> reducer);
+	public GfCollection<T> take(final int n);
+	public GfCollection<T> takeFromBegining(final int n);
+	public GfCollection<T> takeFromEnd(final int n);
+	public GfCollection<T> takeRandom(final int n);
 }
