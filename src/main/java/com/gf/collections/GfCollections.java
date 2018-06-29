@@ -1,6 +1,7 @@
 package com.gf.collections;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -11,6 +12,7 @@ import com.gf.collections.functions.FlatMapFunction;
 import com.gf.collections.functions.Getter;
 import com.gf.collections.functions.MapFunction;
 import com.gf.collections.functions.Reducer;
+import com.gf.collections.functions.ToNumber;
 import com.gf.collections.functions.ToStringFunction;
 import com.gf.collections.iter.CollectionConsumer;
 import com.gf.collections.iter.CollectionIterator;
@@ -460,5 +462,24 @@ public final class GfCollections {
 		for (int i = 0; i < n; i++) 
 			res.add(obj);
 		return res;
+	}
+	
+	public static final <T> GfCollection<T> top(final GfCollection<T> coll, final ToNumber<T> val, final int n){
+		return coll.sortCollection(new Comparator<T>() {
+			@Override
+			public final int compare(final T a, final T b) {
+				return Double.compare(val.toNumber(b), val.toNumber(a));
+			}
+		})
+		.takeFromBegining(n);
+	}
+	public static final <T> GfCollection<T> buttom(final GfCollection<T> coll, final ToNumber<T> val, final int n){
+		return coll.sortCollection(new Comparator<T>() {
+			@Override
+			public final int compare(final T a, final T b) {
+				return Double.compare(val.toNumber(a), val.toNumber(b));
+			}
+		})
+		.takeFromBegining(n);
 	}
 }

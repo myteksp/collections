@@ -11,6 +11,7 @@ import com.gf.collections.functions.FlatMapFunction;
 import com.gf.collections.functions.Getter;
 import com.gf.collections.functions.MapFunction;
 import com.gf.collections.functions.Reducer;
+import com.gf.collections.functions.ToNumber;
 import com.gf.collections.functions.ToStringFunction;
 import com.gf.collections.iter.CollectionConsumer;
 import com.gf.collections.iter.CollectionIterator;
@@ -127,5 +128,13 @@ public class ArrayGfCollection<T> extends ArrayList<T> implements GfCollection<T
 	@Override
 	public GfCollection<T> takeRandom(final int n) {
 		return GfCollections.takeRandom(this, n);
+	}
+	@Override
+	public GfCollection<T> top(final int n, final ToNumber<T> value) {
+		return GfCollections.top(this, value, n);
+	}
+	@Override
+	public GfCollection<T> buttom(final int n, final ToNumber<T> value) {
+		return GfCollections.buttom(this, value, n);
 	}
 }

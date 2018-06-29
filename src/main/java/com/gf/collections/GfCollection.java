@@ -10,6 +10,7 @@ import com.gf.collections.functions.FlatMapFunction;
 import com.gf.collections.functions.Getter;
 import com.gf.collections.functions.MapFunction;
 import com.gf.collections.functions.Reducer;
+import com.gf.collections.functions.ToNumber;
 import com.gf.collections.functions.ToStringFunction;
 import com.gf.collections.iter.CollectionConsumer;
 
@@ -36,4 +37,6 @@ public interface GfCollection<T> extends List<T>{
 	public GfCollection<T> takeFromBegining(final int n);
 	public GfCollection<T> takeFromEnd(final int n);
 	public GfCollection<T> takeRandom(final int n);
+	public GfCollection<T> top(final int n, final ToNumber<T> value);
+	public GfCollection<T> buttom(final int n, final ToNumber<T> value);
 }
