@@ -463,7 +463,6 @@ public final class GfCollections {
 			res.add(obj);
 		return res;
 	}
-	
 	public static final <T> GfCollection<T> top(final GfCollection<T> coll, final ToNumber<T> val, final int n){
 		return coll.sortCollection(new Comparator<T>() {
 			@Override
@@ -471,7 +470,7 @@ public final class GfCollections {
 				return Double.compare(val.toNumber(b), val.toNumber(a));
 			}
 		})
-		.takeFromBegining(n);
+		.takeFromBegining(Math.abs(n));
 	}
 	public static final <T> GfCollection<T> buttom(final GfCollection<T> coll, final ToNumber<T> val, final int n){
 		return coll.sortCollection(new Comparator<T>() {
@@ -480,6 +479,27 @@ public final class GfCollections {
 				return Double.compare(val.toNumber(a), val.toNumber(b));
 			}
 		})
-		.takeFromBegining(n);
+		.takeFromBegining(Math.abs(n));
+	}
+	public static final <T> GfCollection<T> append(final GfCollection<T> coll, final GfCollection<T> anotherCollection){
+		if (anotherCollection == null)
+			return coll;
+		if (anotherCollection.isEmpty())
+			return coll;
+		if (anotherCollection.size() < (((double)coll.size()) * 0.25)) {
+			coll.addAll(anotherCollection);
+			return coll;
+		}else {
+			final ArrayGfCollection<T> res = new ArrayGfCollection<>(coll.size() + anotherCollection.size());
+			final CollectionConsumer<T> consumer = new CollectionConsumer<T>() {
+				@Override
+				public final void consume(final T element, final int index) {
+					res.add(element);
+				}
+			};
+			coll.iterate(consumer);
+			anotherCollection.iterate(consumer);
+			return res;
+		}
 	}
 }

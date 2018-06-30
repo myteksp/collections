@@ -137,4 +137,8 @@ public class ArrayGfCollection<T> extends ArrayList<T> implements GfCollection<T
 	public GfCollection<T> buttom(final int n, final ToNumber<T> value) {
 		return GfCollections.buttom(this, value, n);
 	}
+	@Override
+	public GfCollection<T> append(final GfCollection<T> collection) {
+		return GfCollections.append(this, collection);
+	}
 }
