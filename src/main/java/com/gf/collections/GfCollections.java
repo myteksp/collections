@@ -385,11 +385,11 @@ public final class GfCollections {
 		final int size = input.size();
 		if (n >= size)
 			return input;
-		
+
 		final ArrayGfCollection<T> res = new ArrayGfCollection<T>(n);
 		for (int i = 0; i < n; i++) 
 			res.add(input.get(i));
-		
+
 		return res;
 	}
 
@@ -397,16 +397,16 @@ public final class GfCollections {
 		final int size = input.size();
 		if (n >= size)
 			return input;
-		
+
 		final ArrayGfCollection<T> res = new ArrayGfCollection<T>(n);
 		final int start = size-1;
 		final int end = start - n;
 		for (int i = start; i > end; i--) 
 			res.add(input.get(i));
-		
+
 		return res;
 	}
-	
+
 	private static final class RandomToken<T>{
 		public final T element;
 		public final int swapindex;
@@ -415,7 +415,7 @@ public final class GfCollections {
 			this.swapindex = swapindex;
 		}
 	}
-	
+
 	public static final <T> GfCollection<T> takeRandom(final GfCollection<T> input, final int n){
 		final int size = input.size();
 		switch(size) {
@@ -456,30 +456,72 @@ public final class GfCollections {
 			}
 		});
 	}
-	
+
 	public static final <T> GfCollection<T> populate(final T obj, final int n){
 		final ArrayGfCollection<T> res = new ArrayGfCollection<T>(n);
 		for (int i = 0; i < n; i++) 
 			res.add(obj);
 		return res;
 	}
+	public static final <T> T max(final GfCollection<T> coll, final ToNumber<T> val) {
+		switch(coll.size()) {
+		case 0:
+			return null;
+		case 1:
+			return coll.findFirst();
+		default:
+			int index = 0;
+			double value = Double.NEGATIVE_INFINITY;
+			for (int i = 0; i < coll.size(); i++) {
+				final double c_val = val.toNumber(coll.get(i));
+				if (c_val > value) {
+					value = c_val;
+					index = i;
+				}
+			}
+			return coll.get(index);
+		}
+	}
+	public static final <T> T min(final GfCollection<T> coll, final ToNumber<T> val) {
+		switch(coll.size()) {
+		case 0:
+			return null;
+		case 1:
+			return coll.findFirst();
+		default:
+			int index = 0;
+			double value = Double.POSITIVE_INFINITY;
+			for (int i = 0; i < coll.size(); i++) {
+				final double c_val = val.toNumber(coll.get(i));
+				if (c_val < value) {
+					value = c_val;
+					index = i;
+				}
+			}
+			return coll.get(index);
+		}
+	}
 	public static final <T> GfCollection<T> top(final GfCollection<T> coll, final ToNumber<T> val, final int n){
+		final int len = Math.abs(n);
+		if (len < 2)
+			return GfCollections.asLinkedCollection(max(coll, val));
 		return coll.sortCollection(new Comparator<T>() {
 			@Override
 			public final int compare(final T a, final T b) {
 				return Double.compare(val.toNumber(b), val.toNumber(a));
 			}
-		})
-		.takeFromBegining(Math.abs(n));
+		}).takeFromBegining(len);
 	}
 	public static final <T> GfCollection<T> buttom(final GfCollection<T> coll, final ToNumber<T> val, final int n){
+		final int len = Math.abs(n);
+		if (len < 2)
+			return GfCollections.asLinkedCollection(min(coll, val));
 		return coll.sortCollection(new Comparator<T>() {
 			@Override
 			public final int compare(final T a, final T b) {
 				return Double.compare(val.toNumber(a), val.toNumber(b));
 			}
-		})
-		.takeFromBegining(Math.abs(n));
+		}).takeFromBegining(len);
 	}
 	public static final <T> GfCollection<T> append(final GfCollection<T> coll, final GfCollection<T> anotherCollection){
 		if (anotherCollection == null)
