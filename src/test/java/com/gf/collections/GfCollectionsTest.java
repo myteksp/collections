@@ -3,6 +3,7 @@ package com.gf.collections;
 import org.junit.Test;
 
 import com.gf.collections.functions.FilterFunction;
+import com.gf.collections.functions.ToNumber;
 
 import static org.junit.Assert.*;
 
@@ -19,5 +20,16 @@ public final class GfCollectionsTest {
 				return false;
 			}
 		}));
+	}
+	
+	@Test
+	public final void avarageCollectionsTest(){
+		final double avarage = GfCollections.asLinkedCollection("1", "2", "3", "4").avarage(new ToNumber<String>() {
+			@Override
+			public final double toNumber(final String obj) {
+				return Double.parseDouble(obj);
+			}
+		});
+		assertEquals(0, Math.round(avarage - 2.5));
 	}
 }

@@ -544,4 +544,28 @@ public final class GfCollections {
 			return res;
 		}
 	}
+	public static final <T> double avarage(final GfCollection<T> coll, final ToNumber<T> val) {
+		final AvarageAcumulator sum = coll.map(new MapFunction<T, AvarageAcumulator>() {
+			@Override
+			public final AvarageAcumulator map(final T input) {
+				return new AvarageAcumulator(val.toNumber(input));
+			}
+		}).reduce(new Reducer<AvarageAcumulator>() {
+			@Override
+			public final void reduce(final AvarageAcumulator result, final AvarageAcumulator element, final int index) {
+				result.sum += element.sum;
+			}
+		});
+		if (sum == null)
+			return Double.NaN;
+		
+		return sum.sum / (double)coll.size();
+	}
+	
+	private static final class AvarageAcumulator{
+		public double sum;
+		public AvarageAcumulator(final double initVal) {
+			this.sum = initVal;
+		}
+	}
 }

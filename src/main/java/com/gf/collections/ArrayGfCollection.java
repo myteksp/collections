@@ -141,4 +141,16 @@ public class ArrayGfCollection<T> extends ArrayList<T> implements GfCollection<T
 	public GfCollection<T> append(final GfCollection<T> collection) {
 		return GfCollections.append(this, collection);
 	}
+	@Override
+	public T max(final ToNumber<T> value) {
+		return GfCollections.max(this, value);
+	}
+	@Override
+	public T min(final ToNumber<T> value) {
+		return GfCollections.min(this, value);
+	}
+	@Override
+	public double avarage(final ToNumber<T> value) {
+		return GfCollections.avarage(this, value);
+	}
 }

@@ -40,4 +40,7 @@ public interface GfCollection<T> extends List<T>{
 	public GfCollection<T> top(final int n, final ToNumber<T> value);
 	public GfCollection<T> buttom(final int n, final ToNumber<T> value);
 	public GfCollection<T> append(final GfCollection<T> collection);
+	public T max(final ToNumber<T> value);
+	public T min(final ToNumber<T> value);
+	public double avarage(final ToNumber<T> value);
 }
