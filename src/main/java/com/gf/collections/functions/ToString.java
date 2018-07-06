@@ -1,5 +1,5 @@
 package com.gf.collections.functions;
 
-public interface ToStringFunction<T> {
+public interface ToString<T> {
 	String getString(final T element);
 }

@@ -12,8 +12,11 @@ import com.gf.collections.functions.FlatMapFunction;
 import com.gf.collections.functions.Getter;
 import com.gf.collections.functions.MapFunction;
 import com.gf.collections.functions.Reducer;
-import com.gf.collections.functions.ToNumber;
-import com.gf.collections.functions.ToStringFunction;
+import com.gf.collections.functions.ToDouble;
+import com.gf.collections.functions.ToFloat;
+import com.gf.collections.functions.ToInt;
+import com.gf.collections.functions.ToLong;
+import com.gf.collections.functions.ToString;
 import com.gf.collections.iter.CollectionConsumer;
 import com.gf.collections.iter.CollectionIterator;
 
@@ -284,7 +287,7 @@ public final class GfCollections {
 	}
 
 	public static final <T> String join(final GfCollection<T> input){
-		return join(input, new ToStringFunction<T>() {
+		return join(input, new ToString<T>() {
 			@Override
 			public final String getString(final T element) {
 				if (element == null)
@@ -294,15 +297,15 @@ public final class GfCollections {
 		});
 	}
 
-	public static final <T> String join(final GfCollection<T> input, final ToStringFunction<T> stringifier){
+	public static final <T> String join(final GfCollection<T> input, final ToString<T> stringifier){
 		return join(input, stringifier, ",");
 	}
 
-	public static final <T> String join(final GfCollection<T> input, final ToStringFunction<T> stringifier, final String on){
+	public static final <T> String join(final GfCollection<T> input, final ToString<T> stringifier, final String on){
 		return join(input, stringifier, on, "", "");
 	}
 
-	public static final <T> String join(final GfCollection<T> input, final ToStringFunction<T> stringifier, final String on, final String prefix, final String suffix){
+	public static final <T> String join(final GfCollection<T> input, final ToString<T> stringifier, final String on, final String prefix, final String suffix){
 		final int length = input.size();
 		switch(length){
 		case 0:
@@ -463,7 +466,7 @@ public final class GfCollections {
 			res.add(obj);
 		return res;
 	}
-	public static final <T> T max(final GfCollection<T> coll, final ToNumber<T> val) {
+	public static final <T> T max(final GfCollection<T> coll, final ToDouble<T> val) {
 		switch(coll.size()) {
 		case 0:
 			return null;
@@ -473,7 +476,7 @@ public final class GfCollections {
 			int index = 0;
 			double value = Double.NEGATIVE_INFINITY;
 			for (int i = 0; i < coll.size(); i++) {
-				final double c_val = val.toNumber(coll.get(i));
+				final double c_val = val.toDouble(coll.get(i));
 				if (c_val > value) {
 					value = c_val;
 					index = i;
@@ -482,7 +485,7 @@ public final class GfCollections {
 			return coll.get(index);
 		}
 	}
-	public static final <T> T min(final GfCollection<T> coll, final ToNumber<T> val) {
+	public static final <T> T min(final GfCollection<T> coll, final ToDouble<T> val) {
 		switch(coll.size()) {
 		case 0:
 			return null;
@@ -492,7 +495,7 @@ public final class GfCollections {
 			int index = 0;
 			double value = Double.POSITIVE_INFINITY;
 			for (int i = 0; i < coll.size(); i++) {
-				final double c_val = val.toNumber(coll.get(i));
+				final double c_val = val.toDouble(coll.get(i));
 				if (c_val < value) {
 					value = c_val;
 					index = i;
@@ -501,25 +504,25 @@ public final class GfCollections {
 			return coll.get(index);
 		}
 	}
-	public static final <T> GfCollection<T> top(final GfCollection<T> coll, final ToNumber<T> val, final int n){
+	public static final <T> GfCollection<T> top(final GfCollection<T> coll, final ToDouble<T> val, final int n){
 		final int len = Math.abs(n);
 		if (len < 2)
 			return GfCollections.asLinkedCollection(max(coll, val));
 		return coll.sortCollection(new Comparator<T>() {
 			@Override
 			public final int compare(final T a, final T b) {
-				return Double.compare(val.toNumber(b), val.toNumber(a));
+				return Double.compare(val.toDouble(b), val.toDouble(a));
 			}
 		}).takeFromBegining(len);
 	}
-	public static final <T> GfCollection<T> buttom(final GfCollection<T> coll, final ToNumber<T> val, final int n){
+	public static final <T> GfCollection<T> buttom(final GfCollection<T> coll, final ToDouble<T> val, final int n){
 		final int len = Math.abs(n);
 		if (len < 2)
 			return GfCollections.asLinkedCollection(min(coll, val));
 		return coll.sortCollection(new Comparator<T>() {
 			@Override
 			public final int compare(final T a, final T b) {
-				return Double.compare(val.toNumber(a), val.toNumber(b));
+				return Double.compare(val.toDouble(a), val.toDouble(b));
 			}
 		}).takeFromBegining(len);
 	}
@@ -544,28 +547,163 @@ public final class GfCollections {
 			return res;
 		}
 	}
-	public static final <T> double avarage(final GfCollection<T> coll, final ToNumber<T> val) {
-		final AvarageAcumulator sum = coll.map(new MapFunction<T, AvarageAcumulator>() {
-			@Override
-			public final AvarageAcumulator map(final T input) {
-				return new AvarageAcumulator(val.toNumber(input));
-			}
-		}).reduce(new Reducer<AvarageAcumulator>() {
-			@Override
-			public final void reduce(final AvarageAcumulator result, final AvarageAcumulator element, final int index) {
-				result.sum += element.sum;
-			}
-		});
-		if (sum == null)
-			return Double.NaN;
-		
-		return sum.sum / (double)coll.size();
+	public static final <T> double avarage(final GfCollection<T> coll, final ToDouble<T> val) {
+		if (coll.isEmpty())
+			return 0;
+		return coll.sum(val) / (double)coll.size();
 	}
 	
-	private static final class AvarageAcumulator{
-		public double sum;
-		public AvarageAcumulator(final double initVal) {
-			this.sum = initVal;
+	public static final <T> int avarage(final GfCollection<T> coll, final ToInt<T> val) {
+		if (coll.isEmpty())
+			return 0;
+		return coll.sum(val) / coll.size();
+	}
+	
+	public static final <T> long avarage(final GfCollection<T> coll, final ToLong<T> val) {
+		if (coll.isEmpty())
+			return 0;
+		return coll.sum(val) / (long)coll.size();
+	}
+	
+	public static final <T> float avarage(final GfCollection<T> coll, final ToFloat<T> val) {
+		if (coll.isEmpty())
+			return 0;
+		return coll.sum(val) / (float)coll.size();
+	}
+
+	public static final <T> double sum(final GfCollection<T> coll, final ToDouble<T> val) {
+		double sum = 0;
+		for(final Double v : coll.map(new MapFunction<T, Double>() {
+			@Override
+			public final Double map(final T input) {
+				return val.toDouble(input);
+			}
+		})) 
+			sum += v;
+		
+		
+		return sum;
+	}
+	
+	public static final <T> int sum(final GfCollection<T> coll, final ToInt<T> val) {
+		int sum = 0;
+		for(final Integer v : coll.map(new MapFunction<T, Integer>() {
+			@Override
+			public final Integer map(final T input) {
+				return val.toInt(input);
+			}
+		})) 
+			sum += v;
+		
+		
+		return sum;
+	}
+	
+	public static final <T> long sum(final GfCollection<T> coll, final ToLong<T> val) {
+		long sum = 0;
+		for(final Long v : coll.map(new MapFunction<T, Long>() {
+			@Override
+			public final Long map(final T input) {
+				return val.toLong(input);
+			}
+		})) 
+			sum += v;
+		
+		
+		return sum;
+	}
+	
+	public static final <T> float sum(final GfCollection<T> coll, final ToFloat<T> val) {
+		float sum = 0;
+		for(final Float v : coll.map(new MapFunction<T, Float>() {
+			@Override
+			public final Float map(final T input) {
+				return val.toFloat(input);
+			}
+		})) 
+			sum += v;
+		
+		
+		return sum;
+	}
+
+	public static final <T> GfCollection<T> range(final GfCollection<T> coll, final int startIndex, final int length) {
+		final ArrayGfCollection<T> result = new ArrayGfCollection<T>(length);
+		CollectionIterator.iterate(coll, new CollectionConsumer<T>() {
+			@Override
+			public final void consume(final T element, final int index) {
+				result.add(element);
+			}
+		}, startIndex, length);
+		return result;
+	}
+
+	public static final <T> GfCollection<T> range(final GfCollection<T> coll, final CollectionConsumer<T> consumer, final int startIndex, final int length) {
+		final ArrayGfCollection<T> result = new ArrayGfCollection<T>(length);
+		CollectionIterator.iterate(coll, new CollectionConsumer<T>() {
+			@Override
+			public final void consume(final T element, final int index) {
+				result.add(element);
+				consumer.consume(element, index);
+			}
+		}, startIndex, length);
+		return result;
+	}
+
+	public static final <T> GfCollection<GfCollection<T>> split(final GfCollection<T> coll, final int n) {
+		final int len = Math.min(coll.size(), n);
+		if (len < 2) {
+			if (len == 1) {
+				final ArrayGfCollection<GfCollection<T>> res = new ArrayGfCollection<GfCollection<T>>(1);
+				res.add(coll);
+				return res;
+			}else {
+				return GfCollections.asLinkedCollection();
+			}
 		}
+		final int colLen = Math.max(10, (int)(Math.round((double)coll.size() / (double)len) + 1));
+		final GfCollection<GfCollection<T>> result = new ArrayGfCollection<GfCollection<T>>(len);
+		for (int i = 0; i < len; i++) 
+			result.add(new ArrayGfCollection<T>(colLen));
+
+		coll.iterate(new CollectionConsumer<T>() {
+			private final int lastIndex = len - 1;
+			@Override
+			public final void consume(final T element, final int index) {
+				result.get(index % lastIndex).add(element);
+			}
+		});
+		return result;
+	}
+
+	public static final <T> GfCollection<T> merge(final GfCollection<GfCollection<T>> coll) {
+		final int len = coll.size();
+		if (len == 0)
+			return asLinkedCollection();
+
+		if (len == 1)
+			return coll.findFirst();
+
+		final int sumaryLen = (int)coll.sum(new ToInt<GfCollection<T>>() {
+			@Override
+			public final int toInt(final GfCollection<T> obj) {
+				return obj.size();
+			}
+		});
+		
+		final ArrayGfCollection<T> result = new ArrayGfCollection<T>(sumaryLen);
+		int colLevel = 0;
+		for (;;) {
+			for(final GfCollection<T> column : coll) 
+				if (colLevel < column.size()) 
+					result.add(column.get(colLevel));
+			
+			if (result.size() >= sumaryLen)
+				break;
+			
+			colLevel++;
+		}
+
+		return result;
 	}
 }
