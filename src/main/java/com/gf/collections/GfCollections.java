@@ -2,6 +2,7 @@ package com.gf.collections;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -357,6 +358,39 @@ public final class GfCollections {
 		for(final Entry<K, V> e : set) 
 			res.add(e);
 
+		return res;
+	}
+	
+	public static final <T> GfCollection<T> filterDuplicates(final GfCollection<T> src) {
+		final int len = src.size();
+		final HashMap<T, T> map = new HashMap<T, T>(len);
+		final GfCollection<T> res = new ArrayGfCollection<T>(len);
+		src.iterate(new CollectionConsumer<T>() {
+			@Override
+			public final void consume(final T element, final int index) {
+				if (map.get(element) == null) {
+					map.put(element, element);
+					res.add(element);
+				}
+			}
+		});
+		return res;
+	}
+	
+	public static final <T, O> GfCollection<T> filterDuplicates(final GfCollection<T> src, final Getter<T,O> getter) {
+		final int len = src.size();
+		final HashMap<O, T> map = new HashMap<O, T>(len);
+		final GfCollection<T> res = new ArrayGfCollection<T>(len);
+		src.iterate(new CollectionConsumer<T>() {
+			@Override
+			public final void consume(final T element, final int index) {
+				final O key = getter.get(element);
+				if (map.get(key) == null) {
+					map.put(key, element);
+					res.add(element);
+				}
+			}
+		});
 		return res;
 	}
 

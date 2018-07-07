@@ -56,4 +56,7 @@ public interface GfCollection<T> extends List<T>{
 	public int sum(final ToInt<T> value);
 	public long sum(final ToLong<T> value);
 	public float sum(final ToFloat<T> value);
+	public T merge();
+	public <O> GfCollection<T> filterDuplicates(final Getter<T,O> getter);
+	public GfCollection<T> filterDuplicates();
 }

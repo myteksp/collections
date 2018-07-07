@@ -44,7 +44,7 @@ public final class GfCollectionsTest {
 	
 	@Test
 	public final void splitCollectionsTest(){
-		final GfCollection<Integer> coll = GfCollections.merge(GfCollections.asArrayCollection(1, 2, 3, 4, 5, 6, 7, 8, 9).split(3));
+		final GfCollection<Integer> coll = GfCollections.asArrayCollection(1, 2, 3, 4, 5, 6, 7, 8, 9).split(3).merge();
 		for (int i = 0; i < coll.size(); i++) {
 			assertEquals(i + 1, (int)coll.get(i));
 		}

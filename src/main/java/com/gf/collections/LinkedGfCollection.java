@@ -196,4 +196,17 @@ public class LinkedGfCollection<T> extends LinkedList<T> implements GfCollection
 	public float avarage(final ToFloat<T> value) {
 		return GfCollections.avarage(this, value);
 	}
+	@SuppressWarnings("unchecked")
+	@Override
+	public T merge() {
+		return (T) GfCollections.merge((GfCollection<GfCollection<T>>) this);
+	}
+	@Override
+	public <O> GfCollection<T> filterDuplicates(final Getter<T, O> getter) {
+		return GfCollections.filterDuplicates(this, getter);
+	}
+	@Override
+	public GfCollection<T> filterDuplicates() {
+		return GfCollections.filterDuplicates(this);
+	}
 }
