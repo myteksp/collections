@@ -11,13 +11,9 @@ public final class CollectionIterator {
 	private static final <T> void iterateLinked(
 			final GfCollection<T> collection, 
 			final CollectionConsumer<T> consumer){
-		final Iterator<T> iter = collection.iterator();
-		for (int i = 0; i < Integer.MAX_VALUE; i++) 
-			try {
-				consumer.consume(iter.next(), i);
-			}catch(final NoSuchElementException ex) {
-				return;
-			}
+		int count = 0;
+		for(final T elem : collection) 
+			consumer.consume(elem, count++);
 	}
 	
 	private static final <T> void doIterate(
