@@ -1,11 +1,22 @@
 package com.gf.collections.tuples;
 
-public final class Tuple1 <T1> {
+import com.gf.collections.ArrayGfCollection;
+import com.gf.collections.GfCollection;
+
+public final class Tuple1 <T1> implements Tuple{
 	public final T1 v1;
 	
 	public Tuple1(final T1 v1) {
 		this.v1 = v1;
 	}
+	
+	@Override
+	public GfCollection<?> unpack() {
+		final ArrayGfCollection<Object> res = new ArrayGfCollection<Object>(1);
+		res.add(v1);
+		return res;
+	}
+	
 	@Override
 	public final int hashCode() {
 		final int prime = 31;

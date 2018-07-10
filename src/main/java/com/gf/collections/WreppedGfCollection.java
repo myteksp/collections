@@ -333,4 +333,8 @@ public class WreppedGfCollection<T> implements GfCollection<T>{
 	public GfCollection<T> filterDuplicates() {
 		return GfCollections.filterDuplicates(this);
 	}
+	@Override
+	public String join(final String on) {
+		return GfCollections.join(this, on);
+	}
 }

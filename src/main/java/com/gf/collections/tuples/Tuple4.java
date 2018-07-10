@@ -1,6 +1,9 @@
 package com.gf.collections.tuples;
 
-public final class Tuple4<T1, T2, T3, T4> {
+import com.gf.collections.ArrayGfCollection;
+import com.gf.collections.GfCollection;
+
+public final class Tuple4<T1, T2, T3, T4> implements Tuple{
 	public final T1 v1;
 	public final T2 v2;
 	public final T3 v3;
@@ -10,6 +13,15 @@ public final class Tuple4<T1, T2, T3, T4> {
 		this.v2 = v2;
 		this.v3 = v3;
 		this.v4 = v4;
+	}
+	@Override
+	public GfCollection<?> unpack() {
+		final ArrayGfCollection<Object> res = new ArrayGfCollection<Object>(4);
+		res.add(v1);
+		res.add(v2);
+		res.add(v3);
+		res.add(v4);
+		return res;
 	}
 	@Override
 	public final int hashCode() {

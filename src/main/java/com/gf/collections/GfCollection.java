@@ -24,6 +24,7 @@ public interface GfCollection<T> extends List<T>{
 	public String join(final ToString<T> stringifier, final String on, final String prefix, final String suffix);
 	public String join(final ToString<T> stringifier, final String on);
 	public String join(final ToString<T> stringifier);
+	public String join(final String on);
 	public String join();
 	public GfCollection<T> sortCollection(final Comparator<T> comparator);
 	public GfCollection<T> find(final FilterFunction<T> seeker);

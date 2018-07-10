@@ -1,12 +1,23 @@
 package com.gf.collections.tuples;
 
-public final class Tuple2 <T1, T2> {
+import com.gf.collections.ArrayGfCollection;
+import com.gf.collections.GfCollection;
+
+public final class Tuple2 <T1, T2> implements Tuple{
 	public final T1 v1;
 	public final T2 v2;
 	
 	public Tuple2(final T1 v1, final T2 v2) {
 		this.v1 = v1;
 		this.v2 = v2;
+	}
+	
+	@Override
+	public GfCollection<?> unpack() {
+		final ArrayGfCollection<Object> res = new ArrayGfCollection<Object>(2);
+		res.add(v1);
+		res.add(v2);
+		return res;
 	}
 
 	@Override

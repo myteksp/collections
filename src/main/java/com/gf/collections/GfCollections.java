@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -20,6 +21,8 @@ import com.gf.collections.functions.ToLong;
 import com.gf.collections.functions.ToString;
 import com.gf.collections.iter.CollectionConsumer;
 import com.gf.collections.iter.CollectionIterator;
+import com.gf.collections.tuples.Tuple2;
+import com.gf.collections.tuples.Tuples;
 
 public final class GfCollections {	
 
@@ -285,6 +288,17 @@ public final class GfCollections {
 	public static final <T> GfCollection<T> action(final GfCollection<T> input, final Action<T> act){
 		act.onAction(input);
 		return input;
+	}
+	
+	public static final <T> String join(final GfCollection<T> input, final String on){
+		return join(input, new ToString<T>() {
+			@Override
+			public final String getString(final T element) {
+				if (element == null)
+					return "null";
+				return element.toString();
+			}
+		}, on);
 	}
 
 	public static final <T> String join(final GfCollection<T> input){
@@ -739,5 +753,49 @@ public final class GfCollections {
 		}
 
 		return result;
+	}
+	
+	public static final <L, R, O> GfCollection<Tuple2<L, R>> flatZip(
+			final GfCollection<L> left, 
+			final GfCollection<R> right,
+			final Getter<L, O> leftGetter,
+			final Getter<R, O> rightGetter){
+		final Map<O, GfCollection<R>> reference = right.groupBy(rightGetter);
+		final GfCollection<Tuple2<L, R>> res = new ArrayGfCollection<Tuple2<L, R>>(left.size() + right.size());
+		left.iterate(new CollectionConsumer<L>() {
+			@Override
+			public final void consume(final L element, final int index) {
+				final O key = leftGetter.get(element);
+				final GfCollection<R> match = reference.get(key);
+				final CollectionConsumer<R> csm = new CollectionConsumer<R>() {
+					@Override
+					public final void consume(final R relem, final int index) {
+						res.add(Tuples.get(element, relem));
+					}
+				};
+				if (match != null) 
+					match.iterate(csm);
+			}
+		});
+		return res;
+	}
+	
+	public static final <L, R, O> GfCollection<Tuple2<L, GfCollection<R>>> zip(
+			final GfCollection<L> left, 
+			final GfCollection<R> right,
+			final Getter<L, O> leftGetter,
+			final Getter<R, O> rightGetter){
+		final Map<O, GfCollection<R>> reference = right.groupBy(rightGetter);
+		final GfCollection<Tuple2<L, GfCollection<R>>> res = new ArrayGfCollection<Tuple2<L, GfCollection<R>>>(left.size());
+		left.iterate(new CollectionConsumer<L>() {
+			@Override
+			public final void consume(final L element, final int index) {
+				final O key = leftGetter.get(element);
+				final GfCollection<R> match = reference.get(key);
+				if (match != null) 
+					res.add(Tuples.get(element, match));
+			}
+		});
+		return res;
 	}
 }
