@@ -16,6 +16,7 @@ import com.gf.collections.functions.ToInt;
 import com.gf.collections.functions.ToLong;
 import com.gf.collections.functions.ToString;
 import com.gf.collections.iter.CollectionConsumer;
+import com.gf.collections.tuples.Tuple2;
 
 public interface GfCollection<T> extends List<T>{
 	public <O> GfCollection<O> map(final MapFunction<T, O> map);
@@ -60,4 +61,10 @@ public interface GfCollection<T> extends List<T>{
 	public T merge();
 	public <O> GfCollection<T> filterDuplicates(final Getter<T,O> getter);
 	public GfCollection<T> filterDuplicates();
+	public <M> GfCollection<Tuple2<T, M>> match(final Getter<T, M> loader);
+	public <M, K> GfCollection<Tuple2<T, M>> match(final Getter<T, K> key, final Getter<K, M> loader);
+	public <R, O> GfCollection<Tuple2<T, GfCollection<R>>> zip(
+			final GfCollection<R> collection, final Getter<T, O> leftGetter, final Getter<R, O> rightGetter);
+	public <R, O> GfCollection<Tuple2<T, R>> flatZip(
+			final GfCollection<R> collection, final Getter<T, O> leftGetter, final Getter<R, O> rightGetter);
 }

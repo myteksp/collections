@@ -755,6 +755,36 @@ public final class GfCollections {
 		return result;
 	}
 	
+	public static final <T, M, K> GfCollection<Tuple2<T, M>> match(
+			final GfCollection<T> coll, 
+			final Getter<T, K> keyFunc,
+			final Getter<K, M> getter){
+		return coll.map(new MapFunction<T, Tuple2<T, M>>() {
+			final HashMap<K, M> cache = new HashMap<K, M>(coll.size());
+			@Override
+			public final Tuple2<T, M> map(final T input) {
+				final K key = keyFunc.get(input);
+				M cached = cache.get(key);
+				if (cached == null) {
+					cached = getter.get(key);
+					cache.put(key, cached);
+				}
+				return new Tuple2<T, M>(input, cached);
+			}
+		});
+	}
+	
+	public static final <T, M> GfCollection<Tuple2<T, M>> match(
+			final GfCollection<T> coll, 
+			final Getter<T, M> getter){
+		return coll.map(new MapFunction<T, Tuple2<T, M>>() {
+			@Override
+			public final Tuple2<T, M> map(final T input) {
+				return new Tuple2<T, M>(input, getter.get(input));
+			}
+		});
+	}
+	
 	public static final <L, R, O> GfCollection<Tuple2<L, R>> flatZip(
 			final GfCollection<L> left, 
 			final GfCollection<R> right,
@@ -775,6 +805,8 @@ public final class GfCollections {
 				};
 				if (match != null) 
 					match.iterate(csm);
+				else
+					res.add(new Tuple2<L, R>(element, null));
 			}
 		});
 		return res;

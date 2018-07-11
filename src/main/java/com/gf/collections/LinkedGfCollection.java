@@ -18,6 +18,7 @@ import com.gf.collections.functions.ToLong;
 import com.gf.collections.functions.ToString;
 import com.gf.collections.iter.CollectionConsumer;
 import com.gf.collections.iter.CollectionIterator;
+import com.gf.collections.tuples.Tuple2;
 
 public class LinkedGfCollection<T> extends LinkedList<T> implements GfCollection<T>{
 	private static final long serialVersionUID = -9087483805324132145L;
@@ -212,5 +213,27 @@ public class LinkedGfCollection<T> extends LinkedList<T> implements GfCollection
 	@Override
 	public String join(final String on) {
 		return GfCollections.join(this, on);
+	}
+	@Override
+	public <M> GfCollection<Tuple2<T, M>> match(final Getter<T, M> getter) {
+		return GfCollections.match(this, getter);
+	}
+	@Override
+	public <R, O> GfCollection<Tuple2<T, GfCollection<R>>> zip(
+			final GfCollection<R> collection, 
+			final Getter<T, O> leftGetter,
+			final Getter<R, O> rightGetter) {
+		return GfCollections.zip(this, collection, leftGetter, rightGetter);
+	}
+	@Override
+	public <R, O> GfCollection<Tuple2<T, R>> flatZip(
+			final GfCollection<R> collection, 
+			final Getter<T, O> leftGetter,
+			final Getter<R, O> rightGetter) {
+		return GfCollections.flatZip(this, collection, leftGetter, rightGetter);
+	}
+	@Override
+	public <M, K> GfCollection<Tuple2<T, M>> match(final Getter<T, K> key, final Getter<K, M> loader) {
+		return GfCollections.match(this, key, loader);
 	}
 }
