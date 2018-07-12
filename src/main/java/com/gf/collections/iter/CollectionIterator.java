@@ -25,6 +25,17 @@ public final class CollectionIterator {
 	
 	public static final <T> void iterate(
 			final GfCollection<T> collection, 
+			final NotIndexedCollectionConsumer<T> consumer) {
+		if (consumer == null)
+			return;
+		if (collection == null)
+			return;
+		for(final T element : collection)
+			consumer.consume(element);
+	}
+	
+	public static final <T> void iterate(
+			final GfCollection<T> collection, 
 			final CollectionConsumer<T> consumer) {
 		if (consumer == null)
 			return;
@@ -34,6 +45,25 @@ public final class CollectionIterator {
 			iterateLinked(collection, consumer);
 		else 
 			doIterate(collection, consumer);
+	}
+	
+	public static final <T> void iterate(
+			final GfCollection<T> collection, 
+			final NotIndexedCollectionConsumer<T> consumer, 
+			final int start,
+			final int lenght) {
+		if (consumer == null)
+			return;
+		if (collection == null)
+			return;
+		final int size = collection.size();
+		final int s = Math.min(Math.max(0, start), size - 1);
+		final int l = Math.min(lenght, (size - s));
+		if (s == 0 && l == size)
+			iterate(collection, consumer);
+		else
+			for (int i = s; i < l + s; i++) 
+				consumer.consume(collection.get(i));
 	}
 	
 	public static final <T> void iterate(

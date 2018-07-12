@@ -16,6 +16,7 @@ import com.gf.collections.functions.ToInt;
 import com.gf.collections.functions.ToLong;
 import com.gf.collections.functions.ToString;
 import com.gf.collections.iter.CollectionConsumer;
+import com.gf.collections.iter.NotIndexedCollectionConsumer;
 import com.gf.collections.tuples.Tuple2;
 
 public interface GfCollection<T> extends List<T>{
@@ -36,6 +37,7 @@ public interface GfCollection<T> extends List<T>{
 	public T findLast();
 	public GfCollection<T> action(final Action<T> action);
 	public GfCollection<T> iterate(final CollectionConsumer<T> consumer);
+	public GfCollection<T> iterate(final NotIndexedCollectionConsumer<T> consumer);
 	public <O> GfMap<O, GfCollection<T>> groupBy(final Getter<T,O> getter);
 	public T reduce(final Reducer<T> reducer);
 	public GfCollection<T> take(final int n);
@@ -53,6 +55,7 @@ public interface GfCollection<T> extends List<T>{
 	public float avarage(final ToFloat<T> value);
 	public GfCollection<T> range(final int startIndex, final int length);
 	public GfCollection<T> range(final CollectionConsumer<T> consumer, final int startIndex, final int length);
+	public GfCollection<T> range(final NotIndexedCollectionConsumer<T> consumer, final int startIndex, final int length);
 	public GfCollection<GfCollection<T>> split(final int n);
 	public double sum(final ToDouble<T> value);
 	public int sum(final ToInt<T> value);

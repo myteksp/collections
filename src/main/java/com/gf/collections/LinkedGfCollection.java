@@ -18,6 +18,7 @@ import com.gf.collections.functions.ToLong;
 import com.gf.collections.functions.ToString;
 import com.gf.collections.iter.CollectionConsumer;
 import com.gf.collections.iter.CollectionIterator;
+import com.gf.collections.iter.NotIndexedCollectionConsumer;
 import com.gf.collections.tuples.Tuple2;
 
 public class LinkedGfCollection<T> extends LinkedList<T> implements GfCollection<T>{
@@ -93,9 +94,9 @@ public class LinkedGfCollection<T> extends LinkedList<T> implements GfCollection
 	}
 	@Override
 	public void forEach(Consumer<? super T> action) {
-		CollectionIterator.iterate(this, new CollectionConsumer<T>() {
+		CollectionIterator.iterate(this, new NotIndexedCollectionConsumer<T>() {
 			@Override
-			public final void consume(final T element, final int index) {
+			public final void consume(final T element) {
 				action.accept(element);
 			}
 		});
@@ -235,5 +236,14 @@ public class LinkedGfCollection<T> extends LinkedList<T> implements GfCollection
 	@Override
 	public <M, K> GfCollection<Tuple2<T, M>> match(final Getter<T, K> key, final Getter<K, M> loader) {
 		return GfCollections.match(this, key, loader);
+	}
+	@Override
+	public GfCollection<T> iterate(final NotIndexedCollectionConsumer<T> consumer) {
+		CollectionIterator.iterate(this, consumer);
+		return this;
+	}
+	@Override
+	public GfCollection<T> range(final NotIndexedCollectionConsumer<T> consumer, final int startIndex, final int length) {
+		return GfCollections.range(this, consumer, startIndex, length);
 	}
 }
