@@ -229,10 +229,19 @@ public final class GfCollections {
 			return result;
 		}else if (input instanceof LinkedGfCollection){
 			final GfCollection<O> result = new LinkedGfCollection<O>();
-			for(final I inp : input)
-				for(final O f : mapper.flatMap(inp))
+			final NotIndexedCollectionConsumer<O> mpcns = new NotIndexedCollectionConsumer<O>() {
+				@Override
+				public final void consume(final O f) {
 					result.add(f);
-
+				}
+			};
+			input.iterate(new NotIndexedCollectionConsumer<I>() {
+				@Override
+				public final void consume(final I element) {
+					wrapAsCollection(mapper.flatMap(element))
+					.iterate(mpcns);
+				}
+			});
 			return result;
 		}else if (input instanceof WreppedGfCollection){
 			final GfCollection<GfCollection<O>> results = new ArrayGfCollection<GfCollection<O>>(input.size());
