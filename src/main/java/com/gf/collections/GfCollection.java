@@ -46,6 +46,8 @@ public interface GfCollection<T> extends List<T>{
 	public GfCollection<T> takeRandom(final int n);
 	public GfCollection<T> top(final int n, final ToDouble<T> value);
 	public GfCollection<T> buttom(final int n, final ToDouble<T> value);
+	public GfCollection<T> top(final int n);
+	public GfCollection<T> buttom(final int n);
 	public GfCollection<T> append(final GfCollection<T> collection);
 	public T max(final ToDouble<T> value);
 	public T min(final ToDouble<T> value);
@@ -61,6 +63,7 @@ public interface GfCollection<T> extends List<T>{
 	public int sum(final ToInt<T> value);
 	public long sum(final ToLong<T> value);
 	public float sum(final ToFloat<T> value);
+	public double sum();
 	public T merge();
 	public <O> GfCollection<T> filterDuplicates(final Getter<T,O> getter);
 	public GfCollection<T> filterDuplicates();

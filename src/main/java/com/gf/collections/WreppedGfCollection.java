@@ -21,6 +21,7 @@ import com.gf.collections.functions.ToString;
 import com.gf.collections.iter.CollectionConsumer;
 import com.gf.collections.iter.CollectionIterator;
 import com.gf.collections.iter.NotIndexedCollectionConsumer;
+import com.gf.collections.presets.Presets;
 import com.gf.collections.tuples.Tuple2;
 
 public class WreppedGfCollection<T> implements GfCollection<T>{
@@ -369,5 +370,32 @@ public class WreppedGfCollection<T> implements GfCollection<T>{
 	@Override
 	public GfCollection<T> range(final NotIndexedCollectionConsumer<T> consumer, final int startIndex, final int length) {
 		return GfCollections.range(this, consumer, startIndex, length);
+	}
+	@Override
+	public GfCollection<T> top(final int n) {
+		return this.top(n, new ToDouble<T>() {
+			@Override
+			public final double toDouble(final T obj) {
+				return Presets.toNumber.toDouble(obj);
+			}
+		});
+	}
+	@Override
+	public GfCollection<T> buttom(final int n) {
+		return this.buttom(n, new ToDouble<T>() {
+			@Override
+			public final double toDouble(final T obj) {
+				return Presets.toNumber.toDouble(obj);
+			}
+		});
+	}
+	@Override
+	public double sum() {
+		return this.sum(new ToDouble<T>() {
+			@Override
+			public double toDouble(T obj) {
+				return Presets.toNumber.toDouble(obj);
+			}
+		});
 	}
 }
