@@ -55,6 +55,7 @@ public interface GfCollection<T> extends List<T>{
 	public int avarage(final ToInt<T> value);
 	public long avarage(final ToLong<T> value);
 	public float avarage(final ToFloat<T> value);
+	public double avarage();
 	public GfCollection<T> range(final int startIndex, final int length);
 	public GfCollection<T> range(final CollectionConsumer<T> consumer, final int startIndex, final int length);
 	public GfCollection<T> range(final NotIndexedCollectionConsumer<T> consumer, final int startIndex, final int length);

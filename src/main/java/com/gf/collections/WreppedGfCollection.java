@@ -398,4 +398,13 @@ public class WreppedGfCollection<T> implements GfCollection<T>{
 			}
 		});
 	}
+	@Override
+	public double avarage() {
+		return this.avarage(new ToDouble<T>() {
+			@Override
+			public double toDouble(T obj) {
+				return Presets.toNumber.toDouble(obj);
+			}
+		});
+	}
 }

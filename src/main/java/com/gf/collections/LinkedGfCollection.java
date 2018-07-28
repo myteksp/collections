@@ -274,4 +274,13 @@ public class LinkedGfCollection<T> extends LinkedList<T> implements GfCollection
 			}
 		});
 	}
+	@Override
+	public double avarage() {
+		return this.avarage(new ToDouble<T>() {
+			@Override
+			public double toDouble(T obj) {
+				return Presets.toNumber.toDouble(obj);
+			}
+		});
+	}
 }
