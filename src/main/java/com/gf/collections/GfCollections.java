@@ -864,28 +864,4 @@ public final class GfCollections {
 		}
 		return coll;
 	}
-	
-	private static final double random(final double min, final double max) {
-		final double range = max - min;
-		return min + (Math.random() * range);
-	}
-	
-	public static final GfCollection<Double> normalizedDistribution(final int len, final double norma, final double min, final double max){
-		final ArrayGfCollection<Double> res = new ArrayGfCollection<Double>(len);
-		if (len == 0)
-			return res;
-		if (len == 1) {
-			res.add(norma);
-			return res;
-		}
-		double val = norma;
-		final int lastIndex = len - 1;
-		for (int i = 0; i < lastIndex; i++) {
-			final double r = val * random(min, max);
-			val = val - r;
-			res.add(r);
-		}
-		res.add(val);
-		return res;
-	}
 }
