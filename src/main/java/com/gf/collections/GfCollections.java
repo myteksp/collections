@@ -865,48 +865,27 @@ public final class GfCollections {
 		return coll;
 	}
 	
-	public static final GfCollection<Double> normalizedDistribution(final int len, final double norma, final int noise){
+	private static final double random(final double min, final double max) {
+		final double range = max - min;
+		return min + (Math.random() * range);
+	}
+	
+	public static final GfCollection<Double> normalizedDistribution(final int len, final double norma, final double min, final double max){
 		final ArrayGfCollection<Double> res = new ArrayGfCollection<Double>(len);
-		final double tlen = len;
-		final double tnoise = noise;
+		if (len == 0)
+			return res;
+		if (len == 1) {
+			res.add(norma);
+			return res;
+		}
 		double val = norma;
 		final int lastIndex = len - 1;
 		for (int i = 0; i < lastIndex; i++) {
-			final double r = val * (Math.random() / (tlen / tnoise));
+			final double r = val * random(min, max);
 			val = val - r;
 			res.add(r);
 		}
 		res.add(val);
-		return res.shufle();
-	}
-	
-	public static final GfCollection<Integer> normalizedDistribution(final int len, final int norma, final int noise){
-		final ArrayGfCollection<Integer> res = new ArrayGfCollection<Integer>(len);
-		final double tlen = len;
-		final double tnoise = noise;
-		int val = norma;
-		final int lastIndex = len - 1;
-		for (int i = 0; i < lastIndex; i++) {
-			final int r = (int) (val * (Math.random() / (tlen / tnoise)));
-			val = val - r;
-			res.add(r);
-		}
-		res.add(val);
-		return res.shufle();
-	}
-	
-	public static final GfCollection<Float> normalizedDistribution(final int len, final float norma, final int noise){
-		final ArrayGfCollection<Float> res = new ArrayGfCollection<Float>(len);
-		final float tlen = len;
-		final float tnoise = noise;
-		float val = norma;
-		final int lastIndex = len - 1;
-		for (int i = 0; i < lastIndex; i++) {
-			final float r = (float) (val * (Math.random() / (tlen / tnoise)));
-			val = val - r;
-			res.add(r);
-		}
-		res.add(val);
-		return res.shufle();
+		return res;
 	}
 }
