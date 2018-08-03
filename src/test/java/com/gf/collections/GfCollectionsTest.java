@@ -18,10 +18,10 @@ import java.util.List;
 public final class GfCollectionsTest {
 	@Test
 	public final void normalizedDistributionTest(){
-		GfCollection<Double> dist = GfCollections.normalizedDistribution(10, 1.0, 0.2, 0.8);
+		final GfCollection<Double> dist = GfCollections.normalizedDistribution(10, 1.1, 0.05, 0.5);
 		final double sum = dist.sum();
 		System.out.println("Sum: " + sum + ". Res: " + dist.join());
-		assertEquals(0, Math.round(sum - 1.0));
+		assertEquals(0, Math.round(sum - 1.1));
 	}
 	@Test
 	public final void sanityCollectionsTest(){
