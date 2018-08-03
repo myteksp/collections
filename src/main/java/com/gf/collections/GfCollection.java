@@ -66,6 +66,7 @@ public interface GfCollection<T> extends List<T>{
 	public float sum(final ToFloat<T> value);
 	public double sum();
 	public T merge();
+	public GfCollection<T> shufle();
 	public <O> GfCollection<T> filterDuplicates(final Getter<T,O> getter);
 	public GfCollection<T> filterDuplicates();
 	public <M> GfCollection<Tuple2<T, M>> match(final Getter<T, M> loader);

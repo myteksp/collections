@@ -407,4 +407,8 @@ public class WreppedGfCollection<T> implements GfCollection<T>{
 			}
 		});
 	}
+	@Override
+	public GfCollection<T> shufle() {
+		return GfCollections.shufle(this);
+	}
 }

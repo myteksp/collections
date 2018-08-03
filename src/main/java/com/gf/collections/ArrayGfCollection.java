@@ -283,4 +283,8 @@ public class ArrayGfCollection<T> extends ArrayList<T> implements GfCollection<T
 			}
 		});
 	}
+	@Override
+	public GfCollection<T> shufle() {
+		return GfCollections.shufle(this);
+	}
 }

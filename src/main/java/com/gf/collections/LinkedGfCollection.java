@@ -283,4 +283,8 @@ public class LinkedGfCollection<T> extends LinkedList<T> implements GfCollection
 			}
 		});
 	}
+	@Override
+	public GfCollection<T> shufle() {
+		return GfCollections.shufle(this);
+	}
 }
