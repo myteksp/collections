@@ -287,4 +287,8 @@ public class LinkedGfCollection<T> extends LinkedList<T> implements GfCollection
 	public GfCollection<T> shufle() {
 		return GfCollections.shufle(this);
 	}
+	@Override
+	public T takeRandom() {
+		return GfCollections.takeRandom(this);
+	}
 }

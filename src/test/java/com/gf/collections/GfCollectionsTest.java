@@ -14,8 +14,57 @@ import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 public final class GfCollectionsTest {
+	@Test
+	public final void randomTest(){
+		final GfCollection<Integer> col = GfCollections.asArrayCollection(1,2,3,4,5,6,7,8,9,10);
+		col.takeRandom(col.size()).forEach(new Consumer<Integer>() {
+			@Override
+			public final void accept(final Integer t) {
+				System.out.println(t + " ");
+			}
+		});
+		
+		System.out.println("=======");
+		final int len = 2;
+		col.takeRandom(len).forEach(new Consumer<Integer>() {
+			@Override
+			public final void accept(final Integer t) {
+				System.out.println(t + " ");
+			}
+		});
+		System.out.println("=======");
+		col.takeRandom(len).forEach(new Consumer<Integer>() {
+			@Override
+			public final void accept(final Integer t) {
+				System.out.println(t + " ");
+			}
+		});
+		System.out.println("=======");
+		col.takeRandom(len).forEach(new Consumer<Integer>() {
+			@Override
+			public final void accept(final Integer t) {
+				System.out.println(t + " ");
+			}
+		});
+		System.out.println("=======");
+		col.takeRandom(len).forEach(new Consumer<Integer>() {
+			@Override
+			public final void accept(final Integer t) {
+				System.out.println(t + " ");
+			}
+		});
+		System.out.println("=======");
+		col.takeRandom(len).forEach(new Consumer<Integer>() {
+			@Override
+			public final void accept(final Integer t) {
+				System.out.println(t + " ");
+			}
+		});
+	}
+	
 	@Test
 	public final void sanityCollectionsTest(){
 		assertEquals(Arrays.asList("2", "3"), GfCollections.asLinkedCollection("1", "2", "3", "4").filter(new FilterFunction<String>() {

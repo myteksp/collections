@@ -476,8 +476,21 @@ public final class GfCollections {
 			this.swapindex = swapindex;
 		}
 	}
+	
+	public static final <T> T takeRandom(final GfCollection<T> input){
+		final int size = input.size();
+		switch(size) {
+		case 0:
+			return null;
+		case 1:
+			return input.findFirst();
+		}
+		final double range = size - 1;
+		return input.get((int)(Math.random() * range));
+	}
 
-	public static final <T> GfCollection<T> takeRandom(final GfCollection<T> input, final int n){
+	public static final <T> GfCollection<T> takeRandom(final GfCollection<T> input, final int amount){
+		final int n = Math.abs(amount);
 		final int size = input.size();
 		switch(size) {
 		case 0:
@@ -485,32 +498,48 @@ public final class GfCollections {
 		case 1:
 			return populate(input.findFirst(), n);
 		}
-		final int range = n-1;
-		final double d_range = range;
-		final ArrayGfCollection<RandomToken<T>> res = new ArrayGfCollection<RandomToken<T>>(n);
-		input.iterate(new NotIndexedCollectionConsumer<T>() {
-			@Override
-			public final void consume(final T element) {
-				res.add(new RandomToken<T>(element, (int)Math.round(Math.random() * d_range)));
-			}
-		});
-		if (n > size) {
-			final double size_range = size - 1;
-			final int toPopulate = n - size;
-			for (int i = 0; i < toPopulate; i++) {
-				final T e = input.get((int)Math.round(size_range * Math.random()));
-				res.add(new RandomToken<T>(e, (int)Math.round(Math.random() * d_range)));
-			}
+		switch(n) {
+		case 0:
+			return new ArrayGfCollection<T>(0);
+		case 1:
+			return populate(takeRandom(input), n);
 		}
-		res.iterate(new CollectionConsumer<GfCollections.RandomToken<T>>() {
+		final double d_range = n-1;
+		final double size_range = size - 1;
+		
+		return input.map(new MapFunction<T, RandomToken<T>>() {
 			@Override
-			public final void consume(final RandomToken<T> element, final int index) {
-				final RandomToken<T> swap = res.get(element.swapindex);
-				res.set(element.swapindex, element);
-				res.set(index, swap);
+			public final RandomToken<T> map(final T input) {
+				return new RandomToken<T>(input, (int)(Math.random() * size_range));
 			}
-		});
-		return res.take(n).map(new MapFunction<GfCollections.RandomToken<T>, T>() {
+		})
+		.action(new Action<GfCollections.RandomToken<T>>() {
+			@Override
+			public final void onAction(GfCollection<RandomToken<T>> self) {
+				if (n > size) {
+					final int toPopulate = n - size;
+					for (int i = 0; i < toPopulate; i++) {
+						final T e = input.get((int)Math.round(size_range * Math.random()));
+						self.add(new RandomToken<T>(e, (int)Math.round(Math.random() * d_range)));
+					}
+				}
+			}
+		})
+		.action(new Action<GfCollections.RandomToken<T>>() {
+			@Override
+			public final void onAction(final GfCollection<RandomToken<T>> self) {
+				self.iterate(new CollectionConsumer<GfCollections.RandomToken<T>>() {
+					@Override
+					public final void consume(final RandomToken<T> element, final int index) {
+						final RandomToken<T> swap = self.get(element.swapindex);
+						self.set(element.swapindex, element);
+						self.set(index, swap);
+					}
+				});
+			}
+		})
+		.take(n)
+		.map(new MapFunction<GfCollections.RandomToken<T>, T>() {
 			@Override
 			public final T map(final RandomToken<T> input) {
 				return input.element;

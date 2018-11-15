@@ -44,6 +44,7 @@ public interface GfCollection<T> extends List<T>{
 	public GfCollection<T> takeFromBegining(final int n);
 	public GfCollection<T> takeFromEnd(final int n);
 	public GfCollection<T> takeRandom(final int n);
+	public T takeRandom();
 	public GfCollection<T> top(final int n, final ToDouble<T> value);
 	public GfCollection<T> buttom(final int n, final ToDouble<T> value);
 	public GfCollection<T> top(final int n);

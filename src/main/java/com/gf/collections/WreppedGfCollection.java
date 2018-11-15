@@ -411,4 +411,8 @@ public class WreppedGfCollection<T> implements GfCollection<T>{
 	public GfCollection<T> shufle() {
 		return GfCollections.shufle(this);
 	}
+	@Override
+	public T takeRandom() {
+		return GfCollections.takeRandom(this);
+	}
 }
