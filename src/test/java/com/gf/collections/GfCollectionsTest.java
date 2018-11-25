@@ -63,6 +63,12 @@ public final class GfCollectionsTest {
 				System.out.println(t + " ");
 			}
 		});
+		col.clear();
+		col.add(250);
+		col.add(150);
+		for (int i = 0; i < 20; i++) {
+			System.out.println("Random from 2: " + col.takeRandom());
+		}
 	}
 	
 	@Test

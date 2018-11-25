@@ -486,7 +486,7 @@ public final class GfCollections {
 			return input.findFirst();
 		}
 		final double range = size - 1;
-		return input.get((int)(Math.random() * range));
+		return input.get((int)Math.round((Math.random() * range)));
 	}
 
 	public static final <T> GfCollection<T> takeRandom(final GfCollection<T> input, final int amount){
@@ -510,7 +510,7 @@ public final class GfCollections {
 		return input.map(new MapFunction<T, RandomToken<T>>() {
 			@Override
 			public final RandomToken<T> map(final T input) {
-				return new RandomToken<T>(input, (int)(Math.random() * size_range));
+				return new RandomToken<T>(input, (int)Math.round((Math.random() * size_range)));
 			}
 		})
 		.action(new Action<GfCollections.RandomToken<T>>() {
