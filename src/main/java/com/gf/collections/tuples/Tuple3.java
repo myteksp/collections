@@ -7,11 +7,17 @@ public final class Tuple3<T1, T2, T3> implements Tuple{
 	public final T1 v1;
 	public final T2 v2;
 	public final T3 v3;
+	
 	public Tuple3(final T1 v1, final T2 v2, final T3 v3) {
 		this.v1 = v1;
 		this.v2 = v2;
 		this.v3 = v3;
 	}
+	
+	public final MutableTuple3<T1, T2, T3> toMutable(){
+		return new MutableTuple3<T1, T2, T3>(v1, v2, v3);
+	}
+	
 	@Override
 	public GfCollection<?> unpack() {
 		final ArrayGfCollection<Object> res = new ArrayGfCollection<Object>(3);

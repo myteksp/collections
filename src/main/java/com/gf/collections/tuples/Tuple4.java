@@ -8,12 +8,19 @@ public final class Tuple4<T1, T2, T3, T4> implements Tuple{
 	public final T2 v2;
 	public final T3 v3;
 	public final T4 v4;
+	
 	public Tuple4(final T1 v1, final T2 v2, final T3 v3, final T4 v4) {
 		this.v1 = v1;
 		this.v2 = v2;
 		this.v3 = v3;
 		this.v4 = v4;
 	}
+	
+	public final MutableTuple4<T1, T2, T3, T4> toMutable(){
+		return new MutableTuple4<T1, T2, T3, T4>(v1, v2, v3, v4);
+	}
+	
+	
 	@Override
 	public GfCollection<?> unpack() {
 		final ArrayGfCollection<Object> res = new ArrayGfCollection<Object>(4);

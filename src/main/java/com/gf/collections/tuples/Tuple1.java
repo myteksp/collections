@@ -10,6 +10,10 @@ public final class Tuple1 <T1> implements Tuple{
 		this.v1 = v1;
 	}
 	
+	public final MutableTuple1<T1> toMutable(){
+		return new MutableTuple1<T1>(v1);
+	}
+	
 	@Override
 	public GfCollection<?> unpack() {
 		final ArrayGfCollection<Object> res = new ArrayGfCollection<Object>(1);

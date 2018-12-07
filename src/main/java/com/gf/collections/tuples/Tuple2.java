@@ -12,6 +12,10 @@ public final class Tuple2 <T1, T2> implements Tuple{
 		this.v2 = v2;
 	}
 	
+	public final MutableTuple2<T1, T2> toMutable(){
+		return new MutableTuple2<T1, T2>(v1, v2);
+	}
+	
 	@Override
 	public GfCollection<?> unpack() {
 		final ArrayGfCollection<Object> res = new ArrayGfCollection<Object>(2);
