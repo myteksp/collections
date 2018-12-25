@@ -2,6 +2,7 @@ package com.gf.collections;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,18 @@ public final class GfCollections {
 		for(final T element : elements)
 			result.add(element);
 
+		return result;
+	}
+	
+	public static final <T> GfCollection<T> asCollection(final Enumeration<T> enumeration){
+		final GfCollection<T> result = new LinkedGfCollection<T>();
+		if (enumeration == null)
+			return result;
+		while(enumeration.hasMoreElements()) {
+			final T e = enumeration.nextElement();
+			if (e != null)
+				result.add(e);
+		}
 		return result;
 	}
 
