@@ -28,8 +28,8 @@ import com.gf.collections.tuples.Tuples;
 
 public final class GfCollections {
 
-	private static final int DEFAULT_ALLOCATION = 25;
-	private static final int MIN_ALLOCATION = 5;
+	protected static final int DEFAULT_ALLOCATION = 25;
+	protected static final int MIN_ALLOCATION = 5;
 
 	private static final int initialLength(final int srcLenght) {
 		final int len = srcLenght + (srcLenght >> 1);
@@ -44,7 +44,7 @@ public final class GfCollections {
 
 	@SafeVarargs
 	public static final <T> GfCollection<T> asCollection(final T ...elements){
-		final GfCollection<T> result = new ArrayGfCollection<T>(initialLength(elements.length));
+		final GfCollection<T> result = new FastArrayGfCollection<T>(initialLength(elements.length));
 		for(final T element : elements)
 			result.add(element);
 
@@ -66,14 +66,14 @@ public final class GfCollections {
 	public static final <T> GfCollection<T> asCollection(final Collection<T> collection){	
 		if (collection == null)
 			return new LinkedGfCollection<T>();
-		final GfCollection<T> result = new ArrayGfCollection<T>(initialLength(collection.size()));
+		final GfCollection<T> result = new FastArrayGfCollection<T>(initialLength(collection.size()));
 		result.addAll(collection);	
 		return result;
 	}
 
 	@SafeVarargs
 	public static final <T> GfCollection<T> asLinkedCollection(final T ...elements){
-		final GfCollection<T> result = new ArrayGfCollection<T>(initialLength(elements.length));
+		final GfCollection<T> result = new FastArrayGfCollection<T>(initialLength(elements.length));
 		for(final T element : elements)
 			result.add(element);
 
@@ -90,7 +90,7 @@ public final class GfCollections {
 
 	@SafeVarargs
 	public static final <T> GfCollection<T> asArrayCollection(final T ...elements){
-		final GfCollection<T> result = new ArrayGfCollection<T>(initialLength(elements.length));
+		final GfCollection<T> result = new FastArrayGfCollection<T>(initialLength(elements.length));
 		for(final T element : elements)
 			result.add(element);
 		return result;
@@ -104,8 +104,8 @@ public final class GfCollections {
 
 	public static final <T> GfCollection<T> asArrayCollection(final Collection<T> collection){
 		if (collection == null)
-			return new ArrayGfCollection<T>(initialLength());
-		final GfCollection<T> result = new ArrayGfCollection<T>(initialLength(collection.size()));
+			return new FastArrayGfCollection<T>(initialLength());
+		final GfCollection<T> result = new FastArrayGfCollection<T>(initialLength(collection.size()));
 		result.addAll(collection);
 		return result;
 	}
@@ -142,7 +142,7 @@ public final class GfCollections {
 	}
 	public static final <T> GfCollection<T> find(final GfCollection<T> input, final FilterFunction<T> seeker, final int limit){
 		final int lim = limit < 0?0:limit;
-		final GfCollection<T> result = new ArrayGfCollection<T>(lim + MIN_ALLOCATION);
+		final GfCollection<T> result = new FastArrayGfCollection<T>(lim + MIN_ALLOCATION);
 		try {
 			CollectionIterator.iterate(input, new NotIndexedCollectionConsumer<T>() {
 				@Override
@@ -178,7 +178,7 @@ public final class GfCollections {
 	}
 
 	public static final <I, O> GfCollection<O> map(final GfCollection<I> input, final MapFunction<I, O> mapper){
-		final GfCollection<O> result = new ArrayGfCollection<O>(initialLength(input.size()));
+		final GfCollection<O> result = new FastArrayGfCollection<O>(initialLength(input.size()));
 		CollectionIterator.iterate(input, new CollectionConsumer<I>() {
 			@Override
 			public final void consume(final I in, final int index) {
@@ -196,7 +196,7 @@ public final class GfCollections {
 	}
 
 	public static final <I, O> GfCollection<O> flatMap(final GfCollection<I> input, final FlatMapFunction<I, O> mapper){
-		final GfCollection<GfCollection<O>> results = new ArrayGfCollection<GfCollection<O>>(input.size());
+		final GfCollection<GfCollection<O>> results = new FastArrayGfCollection<GfCollection<O>>(input.size());
 		final WrappedInt len = new WrappedInt();
 		CollectionIterator.iterate(input, new NotIndexedCollectionConsumer<I>() {
 			@Override
@@ -206,7 +206,7 @@ public final class GfCollections {
 				results.add(flat);
 			}
 		});
-		final GfCollection<O> result = new ArrayGfCollection<O>(initialLength(len.value));
+		final GfCollection<O> result = new FastArrayGfCollection<O>(initialLength(len.value));
 		final NotIndexedCollectionConsumer<O> innerConsumer = new NotIndexedCollectionConsumer<O>() {
 			@Override
 			public final void consume(final O out) {
@@ -296,7 +296,7 @@ public final class GfCollections {
 
 	public static final <K, V> GfCollection<K> collectKeys(final GfHashMap<K, V> map){
 		final Set<K> set = map.keySet();
-		final ArrayGfCollection<K> res = new ArrayGfCollection<K>(initialLength(set.size()));
+		final FastArrayGfCollection<K> res = new FastArrayGfCollection<K>(initialLength(set.size()));
 		for(final K k : set) 
 			res.add(k);
 		return res;
@@ -304,7 +304,7 @@ public final class GfCollections {
 
 	public static final <K, V> GfCollection<V> collectValues(final GfHashMap<K, V> map){
 		final Collection<V> col = map.values();
-		final ArrayGfCollection<V> res = new ArrayGfCollection<V>(initialLength(col.size()));
+		final FastArrayGfCollection<V> res = new FastArrayGfCollection<V>(initialLength(col.size()));
 		for(final V v : col) 
 			res.add(v);
 		return res;
@@ -312,7 +312,7 @@ public final class GfCollections {
 
 	public static final <K, V> GfCollection<Entry<K, V>> collectEntries(final GfHashMap<K, V> map){
 		final Set<Entry<K, V>> set = map.entrySet();
-		final ArrayGfCollection<Entry<K, V>> res = new ArrayGfCollection<Entry<K, V>>(initialLength(set.size()));
+		final FastArrayGfCollection<Entry<K, V>> res = new FastArrayGfCollection<Entry<K, V>>(initialLength(set.size()));
 		for(final Entry<K, V> e : set) 
 			res.add(e);
 		return res;
@@ -321,7 +321,7 @@ public final class GfCollections {
 	public static final <T> GfCollection<T> filterDuplicates(final GfCollection<T> src) {
 		final int len = initialLength(src.size());
 		final HashMap<T, T> map = new HashMap<T, T>(len);
-		final GfCollection<T> res = new ArrayGfCollection<T>(len);
+		final GfCollection<T> res = new FastArrayGfCollection<T>(len);
 		src.iterate(new NotIndexedCollectionConsumer<T>() {
 			@Override
 			public final void consume(final T element) {
@@ -337,7 +337,7 @@ public final class GfCollections {
 	public static final <T, O> GfCollection<T> filterDuplicates(final GfCollection<T> src, final Getter<T,O> getter) {
 		final int len = initialLength(src.size());
 		final HashMap<O, T> map = new HashMap<O, T>(len);
-		final GfCollection<T> res = new ArrayGfCollection<T>(len);
+		final GfCollection<T> res = new FastArrayGfCollection<T>(len);
 		src.iterate(new NotIndexedCollectionConsumer<T>() {
 			@Override
 			public final void consume(final T element) {
@@ -380,7 +380,7 @@ public final class GfCollections {
 		if (n >= size)
 			return input;
 
-		final ArrayGfCollection<T> res = new ArrayGfCollection<T>(initialLength(n));
+		final FastArrayGfCollection<T> res = new FastArrayGfCollection<T>(initialLength(n));
 		for (int i = 0; i < n; i++) 
 			res.add(input.get(i));
 
@@ -392,7 +392,7 @@ public final class GfCollections {
 		if (n >= size)
 			return input;
 
-		final ArrayGfCollection<T> res = new ArrayGfCollection<T>(initialLength(n));
+		final FastArrayGfCollection<T> res = new FastArrayGfCollection<T>(initialLength(n));
 		final int start = size-1;
 		final int end = start - n;
 		for (int i = start; i > end; i--) 
@@ -433,7 +433,7 @@ public final class GfCollections {
 		}
 		switch(n) {
 		case 0:
-			return new ArrayGfCollection<T>(0);
+			return new FastArrayGfCollection<T>(0);
 		case 1:
 			return populate(takeRandom(input), n);
 		}
@@ -481,7 +481,7 @@ public final class GfCollections {
 	}
 
 	public static final <T> GfCollection<T> populate(final T obj, final int n){
-		final ArrayGfCollection<T> res = new ArrayGfCollection<T>(initialLength(n));
+		final FastArrayGfCollection<T> res = new FastArrayGfCollection<T>(initialLength(n));
 		for (int i = 0; i < n; i++) 
 			res.add(obj);
 		return res;
@@ -551,7 +551,7 @@ public final class GfCollections {
 			return coll;
 		if (anotherCollection.isEmpty())
 			return coll;
-		final ArrayGfCollection<T> res = new ArrayGfCollection<T>(initialLength(coll.size() + anotherCollection.size()));
+		final FastArrayGfCollection<T> res = new FastArrayGfCollection<T>(initialLength(coll.size() + anotherCollection.size()));
 		final NotIndexedCollectionConsumer<T> consumer = new NotIndexedCollectionConsumer<T>() {
 			@Override
 			public final void consume(final T element) {
@@ -642,7 +642,7 @@ public final class GfCollections {
 	}
 
 	public static final <T> GfCollection<T> range(final GfCollection<T> coll, final int startIndex, final int length) {
-		final ArrayGfCollection<T> result = new ArrayGfCollection<T>(initialLength(length));
+		final FastArrayGfCollection<T> result = new FastArrayGfCollection<T>(initialLength(length));
 		CollectionIterator.iterate(coll, new NotIndexedCollectionConsumer<T>() {
 			@Override
 			public final void consume(final T element) {
@@ -653,7 +653,7 @@ public final class GfCollections {
 	}
 
 	public static final <T> GfCollection<T> range(final GfCollection<T> coll, final CollectionConsumer<T> consumer, final int startIndex, final int length) {
-		final ArrayGfCollection<T> result = new ArrayGfCollection<T>(initialLength(length));
+		final FastArrayGfCollection<T> result = new FastArrayGfCollection<T>(initialLength(length));
 		CollectionIterator.iterate(coll, new CollectionConsumer<T>() {
 			@Override
 			public final void consume(final T element, final int index) {
@@ -665,7 +665,7 @@ public final class GfCollections {
 	}
 
 	public static final <T> GfCollection<T> range(final GfCollection<T> coll, final NotIndexedCollectionConsumer<T> consumer, final int startIndex, final int length) {
-		final ArrayGfCollection<T> result = new ArrayGfCollection<T>(initialLength(length));
+		final FastArrayGfCollection<T> result = new FastArrayGfCollection<T>(initialLength(length));
 		CollectionIterator.iterate(coll, new NotIndexedCollectionConsumer<T>() {
 			@Override
 			public final void consume(final T element) {
@@ -680,7 +680,7 @@ public final class GfCollections {
 		final int len = Math.min(coll.size(), n);
 		if (len < 2) {
 			if (len == 1) {
-				final ArrayGfCollection<GfCollection<T>> res = new ArrayGfCollection<GfCollection<T>>(1);
+				final FastArrayGfCollection<GfCollection<T>> res = new FastArrayGfCollection<GfCollection<T>>(1);
 				res.add(coll);
 				return res;
 			}else {
@@ -688,9 +688,9 @@ public final class GfCollections {
 			}
 		}
 		final int colLen = initialLength((int)(Math.round((double)coll.size() / (double)len)));
-		final GfCollection<GfCollection<T>> result = new ArrayGfCollection<GfCollection<T>>(initialLength(len));
+		final GfCollection<GfCollection<T>> result = new FastArrayGfCollection<GfCollection<T>>(initialLength(len));
 		for (int i = 0; i < len; i++) 
-			result.add(new ArrayGfCollection<T>(colLen));
+			result.add(new FastArrayGfCollection<T>(colLen));
 
 		coll.iterate(new CollectionConsumer<T>() {
 			private final int lastIndex = len - 1;
@@ -717,7 +717,7 @@ public final class GfCollections {
 			}
 		});
 
-		final ArrayGfCollection<T> result = new ArrayGfCollection<T>(initialLength(sumaryLen));
+		final FastArrayGfCollection<T> result = new FastArrayGfCollection<T>(initialLength(sumaryLen));
 		int colLevel = 0;
 		for (;;) {
 			for(final GfCollection<T> column : coll) 
@@ -769,7 +769,7 @@ public final class GfCollections {
 			final Getter<L, O> leftGetter,
 			final Getter<R, O> rightGetter){
 		final Map<O, GfCollection<R>> reference = right.groupBy(rightGetter);
-		final GfCollection<Tuple2<L, R>> res = new ArrayGfCollection<Tuple2<L, R>>(initialLength(left.size() + right.size()));
+		final GfCollection<Tuple2<L, R>> res = new FastArrayGfCollection<Tuple2<L, R>>(initialLength(left.size() + right.size()));
 		left.iterate(new NotIndexedCollectionConsumer<L>() {
 			@Override
 			public final void consume(final L element) {
@@ -796,7 +796,7 @@ public final class GfCollections {
 			final Getter<L, O> leftGetter,
 			final Getter<R, O> rightGetter){
 		final Map<O, GfCollection<R>> reference = right.groupBy(rightGetter);
-		final GfCollection<Tuple2<L, GfCollection<R>>> res = new ArrayGfCollection<Tuple2<L, GfCollection<R>>>(initialLength(left.size()));
+		final GfCollection<Tuple2<L, GfCollection<R>>> res = new FastArrayGfCollection<Tuple2<L, GfCollection<R>>>(initialLength(left.size()));
 		left.iterate(new NotIndexedCollectionConsumer<L>() {
 			@Override
 			public final void consume(final L element) {
