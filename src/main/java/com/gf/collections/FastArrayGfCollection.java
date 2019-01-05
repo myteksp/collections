@@ -1,6 +1,5 @@
 package com.gf.collections;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
@@ -22,7 +21,7 @@ import com.gf.collections.iter.NotIndexedCollectionConsumer;
 import com.gf.collections.presets.Presets;
 import com.gf.collections.tuples.Tuple2;
 
-public class FastArrayGfCollection<T> extends ArrayList<T> implements GfCollection<T>{
+public class FastArrayGfCollection<T> extends FastList<T> implements GfCollection<T>{
 	private static final long serialVersionUID = 8450297967471649475L;
 	
 	public FastArrayGfCollection(final List<T> source){
