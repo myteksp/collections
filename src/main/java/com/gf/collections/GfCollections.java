@@ -95,6 +95,14 @@ public final class GfCollections {
 			result.add(element);
 		return result;
 	}
+	
+	@SafeVarargs
+	public static final <T> GfCollection<T> asStandartArrayCollection(final T ...elements){
+		final GfCollection<T> result = new ArrayGfCollection<T>(initialLength(elements.length));
+		for(final T element : elements)
+			result.add(element);
+		return result;
+	}
 
 	public static final <T> GfCollection<T> wrapAsCollection(final List<T> list){
 		if (list == null)
@@ -680,7 +688,7 @@ public final class GfCollections {
 		final int len = Math.min(coll.size(), n);
 		if (len < 2) {
 			if (len == 1) {
-				final FastArrayGfCollection<GfCollection<T>> res = new FastArrayGfCollection<GfCollection<T>>(1);
+				final FastArrayGfCollection<GfCollection<T>> res = new FastArrayGfCollection<GfCollection<T>>(initialLength());
 				res.add(coll);
 				return res;
 			}else {
