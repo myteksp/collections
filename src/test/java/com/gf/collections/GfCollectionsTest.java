@@ -15,8 +15,67 @@ import static org.junit.Assert.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public final class GfCollectionsTest {
+	private final GfCollection<Integer> generateInts(final int n){
+		final GfCollection<Integer> res = GfCollections.asLinkedCollection();
+		for (int i = 0; i < n; i++) {
+			res.add((int) (Math.random() * (Integer.MAX_VALUE / 2)));
+		}
+		return res;
+	}
+	private final int runCol(final GfCollection<Integer> coll) {
+		return coll
+		.map(i->i.toString())
+		.map(s->Integer.parseInt(s))
+		.map(i->i.toString())
+		.filter(s->Integer.parseInt(s) > 1000)
+		.size();
+	}
+	
+	private final int runStream(final GfCollection<Integer> coll) {
+		return coll.parallelStream()
+		.map(i->i.toString())
+		.map(s->Integer.parseInt(s))
+		.map(i->i.toString())
+		.filter(s->Integer.parseInt(s) > 1000)
+		.collect(Collectors.toList())
+		.size();
+	}
+	
+	private final void benchMark() {
+		final int n = 100;
+		final GfCollection<Integer> coll = generateInts(1024*100);
+		//warmup
+		for (int i = 0; i < n; i++) {
+			assertEquals(runStream(coll), runCol(coll));
+		}
+		System.out.println("S result:" + runStream(coll) + "; Col Result: " + runCol(coll));
+		long startTime = 0, endTime = 0, cres = 0, sres = 0;
+		startTime = System.currentTimeMillis();
+		for (int i = 0; i < n; i++) {
+			runStream(coll);
+		}
+		endTime = System.currentTimeMillis();
+		sres = endTime - startTime;
+		startTime = System.currentTimeMillis();
+		for (int i = 0; i < n; i++) {
+			runCol(coll);
+		}
+		endTime = System.currentTimeMillis();
+		cres = endTime - startTime;
+		System.out.println("Streams: " + sres + " milliseconds. Collections: " + cres + " milliseconds.");
+	}
+	
+	@Test
+	public final void streamsCompareTest(){
+		for (int i = 0; i < 3; i++) {
+			benchMark();
+		}
+	}
+	
+	
 	@Test
 	public final void randomTest(){
 		final GfCollection<Integer> col = GfCollections.asArrayCollection(1,2,3,4,5,6,7,8,9,10);
