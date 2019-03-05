@@ -291,4 +291,8 @@ public class LinkedGfCollection<T> extends LinkedList<T> implements GfCollection
 	public T takeRandom() {
 		return GfCollections.takeRandom(this);
 	}
+	@Override
+	public int count(FilterFunction<T> seeker) {
+		return GfCollections.count(this, seeker);
+	}
 }

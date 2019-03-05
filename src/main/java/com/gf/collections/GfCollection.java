@@ -33,6 +33,7 @@ public interface GfCollection<T> extends List<T>{
 	public GfCollection<T> find(final FilterFunction<T> seeker, final int limit);
 	public GfCollection<T> findFirst(final Consumer<T> consumer);
 	public GfCollection<T> findLast(final Consumer<T> consumer);
+	public int count(final FilterFunction<T> seeker);
 	public T findFirst();
 	public T findLast();
 	public GfCollection<T> action(final Action<T> action);

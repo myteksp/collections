@@ -291,4 +291,8 @@ public class ArrayGfCollection<T> extends ArrayList<T> implements GfCollection<T
 	public T takeRandom() {
 		return GfCollections.takeRandom(this);
 	}
+	@Override
+	public int count(FilterFunction<T> seeker) {
+		return GfCollections.count(this, seeker);
+	}
 }

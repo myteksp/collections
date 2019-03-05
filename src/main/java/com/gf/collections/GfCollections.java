@@ -95,7 +95,7 @@ public final class GfCollections {
 			result.add(element);
 		return result;
 	}
-	
+
 	@SafeVarargs
 	public static final <T> GfCollection<T> asStandartArrayCollection(final T ...elements){
 		final GfCollection<T> result = new ArrayGfCollection<T>(initialLength(elements.length));
@@ -135,6 +135,17 @@ public final class GfCollections {
 			}
 		});
 		return res;
+	}
+
+	public static final <T> int count(final GfCollection<T> input, final FilterFunction<T> seeker){
+		return input.sum(new ToInt<T>() {
+			@Override
+			public final int toInt(final T obj) {
+				if (seeker.filter(obj))
+					return 1;
+				return 0;
+			}
+		});
 	}
 
 	public static final <T> GfCollection<T> find(final GfCollection<T> input, final FilterFunction<T> seeker){
