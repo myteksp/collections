@@ -75,4 +75,5 @@ public interface GfCollection<T> extends List<T>{
 	public <M, K> GfCollection<Tuple2<T, M>> match(final Getter<T, K> key, final Getter<K, M> loader);
 	public <R, O> GfCollection<Tuple2<T, GfCollection<R>>> zip(final GfCollection<R> collection, final Getter<T, O> leftGetter, final Getter<R, O> rightGetter);
 	public <R, O> GfCollection<Tuple2<T, R>> flatZip(final GfCollection<R> collection, final Getter<T, O> leftGetter, final Getter<R, O> rightGetter);
+	public GfCollection<GfCollection<T>> chunk(final int chunkSize);
 }

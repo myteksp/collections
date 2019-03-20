@@ -295,4 +295,8 @@ public class LinkedGfCollection<T> extends LinkedList<T> implements GfCollection
 	public int count(FilterFunction<T> seeker) {
 		return GfCollections.count(this, seeker);
 	}
+	@Override
+	public GfCollection<GfCollection<T>> chunk(int chunkSize) {
+		return GfCollections.chunk(this, chunkSize);
+	}
 }

@@ -419,4 +419,8 @@ public class WreppedGfCollection<T> implements GfCollection<T>{
 	public int count(FilterFunction<T> seeker) {
 		return GfCollections.count(this, seeker);
 	}
+	@Override
+	public GfCollection<GfCollection<T>> chunk(int chunkSize) {
+		return GfCollections.chunk(this, chunkSize);
+	}
 }

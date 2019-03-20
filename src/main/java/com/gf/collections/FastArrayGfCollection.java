@@ -294,4 +294,8 @@ public class FastArrayGfCollection<T> extends FastList<T> implements GfCollectio
 	public int count(FilterFunction<T> seeker) {
 		return GfCollections.count(this, seeker);
 	}
+	@Override
+	public GfCollection<GfCollection<T>> chunk(int chunkSize) {
+		return GfCollections.chunk(this, chunkSize);
+	}
 }

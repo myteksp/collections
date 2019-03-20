@@ -694,6 +694,26 @@ public final class GfCollections {
 		}, startIndex, length);
 		return result;
 	}
+	
+	public static final <T> GfCollection<GfCollection<T>> chunk(final GfCollection<T> coll, final int chunkSize) {
+		final int n = Math.abs(chunkSize);
+		if (n <= 0) {
+			throw new RuntimeException("Chunk size must be greater than 0.");
+		}
+		final int len = coll.size();
+		final int initSize = initialLength(Math.max(n, initialLength()));
+		final FastArrayGfCollection<GfCollection<T>> res = new FastArrayGfCollection<GfCollection<T>>(Math.max(len / n, initialLength()));
+		FastArrayGfCollection<T> chunk = new FastArrayGfCollection<T>(initSize);
+		res.add(chunk);
+		for (int i = 0; i < len; i++) {
+			if (chunk.size() >= n) {
+				chunk = new FastArrayGfCollection<T>(initSize);
+				res.add(chunk);
+			}
+			chunk.add(coll.get(i));
+		}
+		return res;
+	}
 
 	public static final <T> GfCollection<GfCollection<T>> split(final GfCollection<T> coll, final int n) {
 		final int len = Math.min(coll.size(), n);
