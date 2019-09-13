@@ -7,5 +7,5 @@ public interface AsyncResult<T> {
     T get() throws InterruptedException, ExecutionException;
     T get(final long timeout) throws InterruptedException, TimeoutException, ExecutionException;
     boolean isCompleted();
-    void waitForResult(final ResultListener<T> listener);
+    void onResult(final ResultListener<T> listener);
 }

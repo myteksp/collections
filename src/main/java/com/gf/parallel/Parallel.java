@@ -14,7 +14,10 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+
+import com.gf.collections.GfCollections;
 
 public final class Parallel {
 	public static final void runOn(final Runnable task, final ExecutorService executor){
@@ -52,7 +55,7 @@ public final class Parallel {
 			throw new NullPointerException("Executor can not be null.");
 		if (listener == null)
 			throw new NullPointerException("Listener can not be null.");
-		executor.execute(()->listener.onResult(task.run()));
+		executor.execute(()->listener.completed(task.run()));
 	}
 	public static final <T> AsyncResult<T> scheduleOn(
 			final Task<T> task, 
@@ -84,7 +87,7 @@ public final class Parallel {
 			throw new NullPointerException("TimeUnit can not be null.");
 		if (listener == null)
 			throw new NullPointerException("Listener can not be null.");
-		scheduler.schedule(()->executor.execute(()->listener.onResult(task.run())), delay, timeUnit);
+		scheduler.schedule(()->executor.execute(()->listener.completed(task.run())), delay, timeUnit);
 	}
 	public static final void scheduleAtFixedRateOn(
 			final Runnable command, 
@@ -122,7 +125,7 @@ public final class Parallel {
 		}
 		public final <NO>ExecutionChainBuilder<NO> execute(final ChainTask<O, NO> task, final ExecutorService executor){
 			final CompletableFuture<NO> res = new CompletableFuture<NO>();
-			result.waitForResult(op->Parallel.runOn(()->res.complete(task.run(op)), executor));
+			result.onResult(op->Parallel.runOn(()->res.complete(task.run(op)), executor));
 			return new ExecutionChainBuilder<NO>(Parallel.toAsyncResult(res));
 		}
 		public final <NO>ExecutionChainBuilder<NO> schedule(
@@ -130,14 +133,14 @@ public final class Parallel {
 				final ScheduledExecutorService scheduler, final ExecutorService executor,
 				final long delay, final TimeUnit timeUnit){
 			final CompletableFuture<NO> res = new CompletableFuture<NO>();
-			result.waitForResult(op->Parallel.scheduleOn(()->res.complete(task.run(op)), scheduler, executor, delay, timeUnit));
+			result.onResult(op->Parallel.scheduleOn(()->res.complete(task.run(op)), scheduler, executor, delay, timeUnit));
 			return new ExecutionChainBuilder<NO>(Parallel.toAsyncResult(res));
 		}
 		public final AsyncResult<O> result(){
 			return result;
 		}
 		public final void result(final ResultListener<O> listener) {
-			result.waitForResult(listener);
+			result.onResult(listener);
 		}
 	}
 	
@@ -203,8 +206,8 @@ public final class Parallel {
 			return future.isDone();
 		}
 		@Override
-		public final void waitForResult(final ResultListener<T> listener) {
-			future.thenAccept(res->listener.onResult(res));
+		public final void onResult(final ResultListener<T> listener) {
+			future.thenAccept(res->listener.completed(res));
 		}
 	}
 	public static final <T>CompletableFuture<T> toCompletableFuture(final AsyncResult<T> result){

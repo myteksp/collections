@@ -18,7 +18,7 @@ public final class ParallelTest {
 		final ExecutorService executor = Parallel.newLimitedCachedExecutorService(2, Parallel.newThreadFactory(ThreadPriority.MAX, "TEST"));
 		final long startTime = System.currentTimeMillis();
 		final AsyncResult<String> f = Parallel.scheduleOn(()->"TEST", scheduler, executor, 1000, TimeUnit.MILLISECONDS);
-		f.waitForResult(r->{
+		f.onResult(r->{
 			final long eventualTime = System.currentTimeMillis() - startTime;
 			System.out.println("GOT RESULT: " + r + " after " + eventualTime + " milliseconds.");
 		});
@@ -35,7 +35,7 @@ public final class ParallelTest {
 		.execute(s->Integer.parseInt(s.split("_")[1]), executor)
 		.execute(i->i+1000, executor)
 		.result();
-		f.waitForResult(r->{
+		f.onResult(r->{
 			final long eventualTime = System.currentTimeMillis() - startTime;
 			System.out.println("GOT RESULT: " + r + " after " + eventualTime + " milliseconds.");
 		});
