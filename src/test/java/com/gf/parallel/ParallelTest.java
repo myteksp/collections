@@ -1,0 +1,50 @@
+package com.gf.parallel;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+public final class ParallelTest {
+	@Test
+	public final void scheduleTest() throws InterruptedException, TimeoutException, ExecutionException{
+		final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1, Parallel.newThreadFactory(ThreadPriority.MAX, "SC_TEST"));
+		final ExecutorService executor = Parallel.newLimitedCachedExecutorService(2, Parallel.newThreadFactory(ThreadPriority.MAX, "TEST"));
+		final long startTime = System.currentTimeMillis();
+		final AsyncResult<String> f = Parallel.scheduleOn(()->"TEST", scheduler, executor, 1000, TimeUnit.MILLISECONDS);
+		f.waitForResult(r->{
+			final long eventualTime = System.currentTimeMillis() - startTime;
+			System.out.println("GOT RESULT: " + r + " after " + eventualTime + " milliseconds.");
+		});
+		assertEquals("TEST", f.get(2000));
+		shutdownThreadpols(scheduler, executor);
+	}
+	
+	@Test
+	public final void chainTest() throws InterruptedException, TimeoutException, ExecutionException {
+		final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1, Parallel.newThreadFactory(ThreadPriority.MAX, "SC_TEST"));
+		final ExecutorService executor = Parallel.newLimitedCachedExecutorService(2, Parallel.newThreadFactory(ThreadPriority.MAX, "TEST"));
+		final long startTime = System.currentTimeMillis();
+		final AsyncResult<Integer> f = Parallel.scheduleChain(()->"INT_" + 1000, scheduler, executor, 1000, TimeUnit.MILLISECONDS)
+		.execute(s->Integer.parseInt(s.split("_")[1]), executor)
+		.execute(i->i+1000, executor)
+		.result();
+		f.waitForResult(r->{
+			final long eventualTime = System.currentTimeMillis() - startTime;
+			System.out.println("GOT RESULT: " + r + " after " + eventualTime + " milliseconds.");
+		});
+		assertEquals("2000", f.get(2000) + "");
+		shutdownThreadpols(scheduler, executor);
+	}
+	
+	private final void shutdownThreadpols(final ScheduledExecutorService scheduler, final ExecutorService executor) {
+		scheduler.shutdownNow();
+		executor.shutdownNow();
+	}
+}
