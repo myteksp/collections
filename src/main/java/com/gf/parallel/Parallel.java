@@ -206,8 +206,9 @@ public final class Parallel {
 			return future.isDone();
 		}
 		@Override
-		public final void onResult(final ResultListener<T> listener) {
+		public final AsyncResult<T> onResult(final ResultListener<T> listener) {
 			future.thenAccept(res->listener.completed(res));
+			return this;
 		}
 	}
 	public static final <T>CompletableFuture<T> toCompletableFuture(final AsyncResult<T> result){
