@@ -14,10 +14,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-
-import com.gf.collections.GfCollections;
 
 public final class Parallel {
 	public static final void runOn(final Runnable task, final ExecutorService executor){
@@ -109,6 +106,9 @@ public final class Parallel {
 	public static final <T>ExecutionChainBuilder<T> scheduleChain(final Task<T> task, final ScheduledExecutorService scheduler, 
 			final ExecutorService executor, final long delay, final TimeUnit unit){
 		return new ExecutionChainBuilder<T>(task, scheduler, executor, delay, unit);
+	}
+	public static final <T>ExecutionChainBuilder<T> chain(final AsyncResult<T> result){
+		return new ExecutionChainBuilder<T>(result);
 	}
 	//============UTIL METHODS============
 	public static final class ExecutionChainBuilder<O> {
