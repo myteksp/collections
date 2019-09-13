@@ -217,11 +217,11 @@ public final class Parallel {
 			private final ExecutorService service = executorService;
 			@Override
 			public final void shutdown() {
-				throw new RuntimeException("This executor service is managed by spring.");
+				throw new RuntimeException("This executor service is not managed by this scope.");
 			}
 			@Override
 			public final List<Runnable> shutdownNow() {
-				throw new RuntimeException("This executor service is managed by spring.");
+				throw new RuntimeException("This executor service is not managed by this scope.");
 			}
 			@Override
 			public final boolean isShutdown() {
@@ -233,7 +233,7 @@ public final class Parallel {
 			}
 			@Override
 			public final boolean awaitTermination(final long timeout, final TimeUnit unit) throws InterruptedException {
-				throw new RuntimeException("This executor service is managed by spring and terminated only on shutdown.");
+				throw new RuntimeException("This executor service is not managed by this scope.");
 			}
 			@Override
 			public final <T> Future<T> submit(final Callable<T> task) {
@@ -276,11 +276,11 @@ public final class Parallel {
 			private final ScheduledExecutorService service = executorService;
 			@Override
 			public final void shutdown() {
-				throw new RuntimeException("This executor service is managed by spring.");
+				throw new RuntimeException("This executor service is not managed by this scope.");
 			}
 			@Override
 			public final List<Runnable> shutdownNow() {
-				throw new RuntimeException("This executor service is managed by spring.");
+				throw new RuntimeException("This executor service is not managed by this scope.");
 			}
 			@Override
 			public final boolean isShutdown() {
@@ -292,7 +292,7 @@ public final class Parallel {
 			}
 			@Override
 			public final boolean awaitTermination(final long timeout, final TimeUnit unit) throws InterruptedException {
-				throw new RuntimeException("This executor service is managed by spring and terminated only on shutdown.");
+				throw new RuntimeException("This executor service is not managed by this scope.");
 			}
 			@Override
 			public final <T> Future<T> submit(final Callable<T> task) {
