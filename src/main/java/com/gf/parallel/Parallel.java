@@ -110,6 +110,11 @@ public final class Parallel {
 	public static final <T>ExecutionChainBuilder<T> chain(final AsyncResult<T> result){
 		return new ExecutionChainBuilder<T>(result);
 	}
+	public static final <T> AsyncResult<T> unwrapCascade(final AsyncResult<AsyncResult<T>> cascade){
+		final CompletableFuture<T> res = new CompletableFuture<T>();
+		cascade.onResult(fut->fut.onResult(r->res.complete(r)));
+		return toAsyncResult(res);
+	}
 	//============UTIL METHODS============
 	public static final class ExecutionChainBuilder<O> {
 		private final AsyncResult<O> result;
