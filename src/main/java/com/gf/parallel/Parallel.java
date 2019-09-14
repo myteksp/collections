@@ -110,9 +110,59 @@ public final class Parallel {
 	public static final <T>ExecutionChainBuilder<T> chain(final AsyncResult<T> result){
 		return new ExecutionChainBuilder<T>(result);
 	}
-	public static final <T> AsyncResult<T> unwrapCascade(final AsyncResult<AsyncResult<T>> cascade){
+	public static final <T> AsyncResult<T> unwrapNestedResult(final AsyncResult<AsyncResult<T>> cascade){
 		final CompletableFuture<T> res = new CompletableFuture<T>();
 		cascade.onResult(fut->fut.onResult(r->res.complete(r)));
+		return toAsyncResult(res);
+	}
+	public static final <T> AsyncResult<T> unwrapNestedResult1(final AsyncResult<AsyncResult<AsyncResult<T>>> cascade){
+		final CompletableFuture<T> res = new CompletableFuture<T>();
+		unwrapNestedResult(cascade).onResult(fut->fut.onResult(r->res.complete(r)));
+		return toAsyncResult(res);
+	}
+	public static final <T> AsyncResult<T> unwrapNestedResult2(final AsyncResult<AsyncResult<AsyncResult<AsyncResult<T>>>> cascade){
+		final CompletableFuture<T> res = new CompletableFuture<T>();
+		unwrapNestedResult1(cascade).onResult(fut->fut.onResult(r->res.complete(r)));
+		return toAsyncResult(res);
+	}
+	public static final <T> AsyncResult<T> unwrapNestedResult3(final AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<T>>>>> cascade){
+		final CompletableFuture<T> res = new CompletableFuture<T>();
+		unwrapNestedResult2(cascade).onResult(fut->fut.onResult(r->res.complete(r)));
+		return toAsyncResult(res);
+	}
+	public static final <T> AsyncResult<T> unwrapNestedResult4(final AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<T>>>>>> cascade){
+		final CompletableFuture<T> res = new CompletableFuture<T>();
+		unwrapNestedResult3(cascade).onResult(fut->fut.onResult(r->res.complete(r)));
+		return toAsyncResult(res);
+	}
+	public static final <T> AsyncResult<T> unwrapNestedResult5(final AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<T>>>>>>> cascade){
+		final CompletableFuture<T> res = new CompletableFuture<T>();
+		unwrapNestedResult4(cascade).onResult(fut->fut.onResult(r->res.complete(r)));
+		return toAsyncResult(res);
+	}
+	public static final <T> AsyncResult<T> unwrapNestedResult6(final AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<T>>>>>>>> cascade){
+		final CompletableFuture<T> res = new CompletableFuture<T>();
+		unwrapNestedResult5(cascade).onResult(fut->fut.onResult(r->res.complete(r)));
+		return toAsyncResult(res);
+	}
+	public static final <T> AsyncResult<T> unwrapNestedResult7(final AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<T>>>>>>>>> cascade){
+		final CompletableFuture<T> res = new CompletableFuture<T>();
+		unwrapNestedResult6(cascade).onResult(fut->fut.onResult(r->res.complete(r)));
+		return toAsyncResult(res);
+	}
+	public static final <T> AsyncResult<T> unwrapNestedResult8(final AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<T>>>>>>>>>> cascade){
+		final CompletableFuture<T> res = new CompletableFuture<T>();
+		unwrapNestedResult7(cascade).onResult(fut->fut.onResult(r->res.complete(r)));
+		return toAsyncResult(res);
+	}
+	public static final <T> AsyncResult<T> unwrapNestedResult9(final AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<T>>>>>>>>>>> cascade){
+		final CompletableFuture<T> res = new CompletableFuture<T>();
+		unwrapNestedResult8(cascade).onResult(fut->fut.onResult(r->res.complete(r)));
+		return toAsyncResult(res);
+	}
+	public static final <T> AsyncResult<T> unwrapNestedResult10(final AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<AsyncResult<T>>>>>>>>>>>> cascade){
+		final CompletableFuture<T> res = new CompletableFuture<T>();
+		unwrapNestedResult9(cascade).onResult(fut->fut.onResult(r->res.complete(r)));
 		return toAsyncResult(res);
 	}
 	//============UTIL METHODS============
