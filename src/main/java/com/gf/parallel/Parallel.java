@@ -165,7 +165,6 @@ public final class Parallel {
 		unwrapNestedResult9(cascade).onResult(fut->fut.onResult(r->res.complete(r)));
 		return toAsyncResult(res);
 	}
-	
 	private static final CompletableFuture<?>[] castToFutures(final List<AsyncResult<?>> results){
 		final CompletableFuture<?>[] res = new CompletableFuture<?>[results.size()];
 		for (int i = 0; i < results.size(); i++) 
