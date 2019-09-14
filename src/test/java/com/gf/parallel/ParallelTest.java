@@ -15,21 +15,21 @@ public final class ParallelTest {
 	@Test
 	public final void scheduleTest() throws InterruptedException, TimeoutException, ExecutionException{
 		final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1, Parallel.newThreadFactory(ThreadPriority.MAX, "SC_TEST"));
-		final ExecutorService executor = Parallel.newLimitedCachedExecutorService(2, Parallel.newThreadFactory(ThreadPriority.MAX, "TEST"));
+		final ExecutorService executor = Parallel.newLimitedCachedExecutorService(3, Parallel.newThreadFactory(ThreadPriority.MAX, "TEST"));
 		final long startTime = System.currentTimeMillis();
 		final AsyncResult<String> f = Parallel.scheduleOn(()->"TEST", scheduler, executor, 1000, TimeUnit.MILLISECONDS);
 		f.onResult(r->{
 			final long eventualTime = System.currentTimeMillis() - startTime;
 			System.out.println("GOT RESULT: " + r + " after " + eventualTime + " milliseconds.");
 		});
-		assertEquals("TEST", f.get(2000));
+		assertEquals("TEST", f.get(3000));
 		shutdownThreadpols(scheduler, executor);
 	}
 	
 	@Test
 	public final void chainTest() throws InterruptedException, TimeoutException, ExecutionException {
 		final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1, Parallel.newThreadFactory(ThreadPriority.MAX, "SC_TEST"));
-		final ExecutorService executor = Parallel.newLimitedCachedExecutorService(2, Parallel.newThreadFactory(ThreadPriority.MAX, "TEST"));
+		final ExecutorService executor = Parallel.newLimitedCachedExecutorService(3, Parallel.newThreadFactory(ThreadPriority.MAX, "TEST"));
 		final long startTime = System.currentTimeMillis();
 		final AsyncResult<Integer> f = Parallel.scheduleChain(()->"INT_" + 1000, scheduler, executor, 1000, TimeUnit.MILLISECONDS)
 		.execute(s->Integer.parseInt(s.split("_")[1]), executor)
@@ -39,7 +39,7 @@ public final class ParallelTest {
 			final long eventualTime = System.currentTimeMillis() - startTime;
 			System.out.println("GOT RESULT: " + r + " after " + eventualTime + " milliseconds.");
 		});
-		assertEquals("2000", f.get(2000) + "");
+		assertEquals("2000", f.get(3000) + "");
 		shutdownThreadpols(scheduler, executor);
 	}
 	

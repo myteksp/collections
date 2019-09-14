@@ -16,8 +16,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.gf.collections.GfCollections;
-
 public final class Parallel {
 	public static final void runOn(final Runnable task, final ExecutorService executor){
 		if (task == null)
@@ -167,13 +165,15 @@ public final class Parallel {
 		unwrapNestedResult9(cascade).onResult(fut->fut.onResult(r->res.complete(r)));
 		return toAsyncResult(res);
 	}
+	
+	private static final CompletableFuture<?>[] castToFutures(final List<AsyncResult<?>> results){
+		return results.toArray(new CompletableFuture<?>[results.size()]);
+	}
 	public static final AsyncResult<Void> combineAllOfResults(final List<AsyncResult<?>> results){
-		return toAsyncResult(CompletableFuture.allOf((CompletableFuture<?>[]) GfCollections.wrapAsCollection(results)
-		.map(r->toCompletableFuture(r)).toArray()));
+		return toAsyncResult(CompletableFuture.allOf(castToFutures(results)));
 	}
 	public static final AsyncResult<Object> combineAnyOfResults(final List<AsyncResult<?>> results){
-		return toAsyncResult(CompletableFuture.anyOf((CompletableFuture<?>[]) GfCollections.wrapAsCollection(results)
-		.map(r->toCompletableFuture(r)).toArray()));
+		return toAsyncResult(CompletableFuture.anyOf(castToFutures(results)));
 	}
 	//============UTIL METHODS============
 	public static final class ExecutionChainBuilder<O> {
