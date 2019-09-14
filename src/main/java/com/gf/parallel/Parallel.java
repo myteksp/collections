@@ -165,18 +165,6 @@ public final class Parallel {
 		unwrapNestedResult9(cascade).onResult(fut->fut.onResult(r->res.complete(r)));
 		return toAsyncResult(res);
 	}
-	private static final CompletableFuture<?>[] castToFutures(final List<AsyncResult<?>> results){
-		final CompletableFuture<?>[] res = new CompletableFuture<?>[results.size()];
-		for (int i = 0; i < results.size(); i++) 
-			res[i] = toCompletableFuture(results.get(i));
-		return res;
-	}
-	public static final AsyncResult<Void> combineAllOfResults(final List<AsyncResult<?>> results){
-		return toAsyncResult(CompletableFuture.allOf(castToFutures(results)));
-	}
-	public static final AsyncResult<Object> combineAnyOfResults(final List<AsyncResult<?>> results){
-		return toAsyncResult(CompletableFuture.anyOf(castToFutures(results)));
-	}
 	//============UTIL METHODS============
 	public static final class ExecutionChainBuilder<O> {
 		private final AsyncResult<O> result;
