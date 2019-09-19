@@ -47,7 +47,6 @@ public final class GfCollectionsTest {
 	private final void benchMark() {
 		final int n = 100;
 		final GfCollection<Integer> coll = generateInts(1024*100);
-		//warmup
 		for (int i = 0; i < n; i++) {
 			assertEquals(runStream(coll), runCol(coll));
 		}
