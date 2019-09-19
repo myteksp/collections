@@ -2,6 +2,7 @@ package com.gf.parallel;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -15,6 +16,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
+
+import com.gf.collections.GfCollections;
 
 public final class Parallel {
 	public static final void runOn(final Runnable task, final ExecutorService executor){
@@ -199,20 +202,261 @@ public final class Parallel {
 		}
 	}
 	
+	private static final Runnable wrapRunnable(final Runnable runnable, final LoggerDelegate logger) {
+		if (runnable == null)
+			return null;
+		final Runnable res = new Runnable() {
+			private final LoggerDelegate log = logger;
+			private final String id = UUID.randomUUID().toString();
+			private final Runnable task = runnable;
+			private final String startMessage(final long stratTime) {
+				final StringBuilder sb = new StringBuilder(100);
+				sb.append("[Task '").append(id).append("' start timestamp: ").append(stratTime).append("]");
+				return sb.toString();
+			}
+			private final String endMessage(final long stratTime, final long endTime) {
+				final StringBuilder sb = new StringBuilder(100);
+				sb.append("[Task '").append(id).append("' start timestamp: ").append(stratTime).append(", ")
+				.append("end timestamp: ").append(endTime).append(". Total time: ").append(endTime - stratTime).append(" milliseconds.]");
+				return sb.toString();
+			}
+			private final String errorMessage(final long stratTime, final long endTime) {
+				final StringBuilder sb = new StringBuilder(100);
+				sb.append("[Task '").append(id).append("' ended with exception. Start timestamp: ").append(stratTime).append(", ")
+				.append("end timestamp: ").append(endTime).append(". Total time: ").append(endTime - stratTime).append(" milliseconds.]");
+				return sb.toString();
+			}
+			public final void run() {
+				final long start = System.currentTimeMillis();
+				log.log(LogLevel.INFO, startMessage(start));
+				try {
+					task.run();
+				}catch(final Throwable t) {
+					log.log(LogLevel.ERROR, errorMessage(start, System.currentTimeMillis()), t);
+					return;
+				}
+				log.log(LogLevel.INFO, endMessage(start, System.currentTimeMillis()));
+			}
+			@Override
+			public final String toString() {
+				final StringBuilder sb = new StringBuilder(100);
+				sb.append("[Task '").append(id).append("']");
+				return sb.toString();
+			}
+		};
+		logger.log(LogLevel.DEBUG, res.toString() + " submited.");
+		return res;
+	}
+	
+	private static final <T> Callable<T> wrapRunnable(final Callable<T> runnable, final LoggerDelegate logger) {
+		if (runnable == null)
+			return null;
+		final Callable<T> res = new Callable<T>(){
+			private final LoggerDelegate log = logger;
+			private final String id = UUID.randomUUID().toString();
+			private final Callable<T> task = runnable;
+			private final String startMessage(final long stratTime) {
+				final StringBuilder sb = new StringBuilder(100);
+				sb.append("[Task '").append(id).append("' start timestamp: ").append(stratTime).append("]");
+				return sb.toString();
+			}
+			private final String endMessage(final long stratTime, final long endTime) {
+				final StringBuilder sb = new StringBuilder(100);
+				sb.append("[Task '").append(id).append("' start timestamp: ").append(stratTime).append(", ")
+				.append("end timestamp: ").append(endTime).append(". Total time: ").append(endTime - stratTime).append(" milliseconds.]");
+				return sb.toString();
+			}
+			private final String errorMessage(final long stratTime, final long endTime) {
+				final StringBuilder sb = new StringBuilder(100);
+				sb.append("[Task '").append(id).append("' ended with exception. Start timestamp: ").append(stratTime).append(", ")
+				.append("end timestamp: ").append(endTime).append(". Total time: ").append(endTime - stratTime).append(" milliseconds.]");
+				return sb.toString();
+			}
+			@Override
+			public final T call() throws Exception {
+				final long start = System.currentTimeMillis();
+				log.log(LogLevel.INFO, startMessage(start));
+				final T result;
+				try {
+					result = task.call();
+				}catch(final Exception t) {
+					log.log(LogLevel.ERROR, errorMessage(start, System.currentTimeMillis()), t);
+					throw t;
+				}
+				log.log(LogLevel.INFO, endMessage(start, System.currentTimeMillis()));
+				return result;
+			}
+			@Override
+			public final String toString() {
+				final StringBuilder sb = new StringBuilder(100);
+				sb.append("[Task '").append(id).append("']");
+				return sb.toString();
+			}
+		};
+		logger.log(LogLevel.DEBUG, res.toString() + " submited.");
+		return res; 
+	}
+	
+	public static final ExecutorService newLimitedCachedExecutorService(final int threadsCount, final ThreadFactory threadFactory, final LoggerDelegate logger) {
+		final ExecutorService res = new ExecutorService() {
+			private final LoggerDelegate log = logger;
+			private final int threads = threadsCount;
+			private final String threadsDescriptor = threadFactory.toString();
+			private final ThreadPoolExecutor executor = new ThreadPoolExecutor(0, threads,
+					60L, TimeUnit.SECONDS,
+					new SynchronousQueue<Runnable>(),
+					threadFactory);
+			@Override
+			public final void execute(final Runnable command) {
+				executor.execute(wrapRunnable(command, log));
+			}
+			@Override
+			public final <T> Future<T> submit(final Runnable task, final T result) {
+				return executor.submit(wrapRunnable(task, log), result);
+			}
+			@Override
+			public final Future<?> submit(final Runnable task) {
+				return executor.submit(wrapRunnable(task, log));
+			}
+			@Override
+			public final <T> Future<T> submit(final Callable<T> task) {
+				return executor.submit(wrapRunnable(task, log));
+			}
+			@Override
+			public final List<Runnable> shutdownNow() {
+				return executor.shutdownNow();
+			}
+			@Override
+			public final void shutdown() {
+				executor.shutdown();
+			}
+			@Override
+			public final boolean isTerminated() {
+				return executor.isTerminated();
+			}
+			@Override
+			public final boolean isShutdown() {
+				return executor.isShutdown();
+			}
+			@Override
+			public final <T> T invokeAny(final Collection<? extends Callable<T>> tasks, 
+					final long timeout, 
+					final TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+				return executor.invokeAny(GfCollections.asArrayCollection(tasks).map(t->wrapRunnable(t, log)), timeout, unit);
+			}
+			@Override
+			public final <T> T invokeAny(final Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException {
+				return executor.invokeAny(GfCollections.asArrayCollection(tasks).map(t->wrapRunnable(t, log)));
+			}
+			@Override
+			public final <T> List<Future<T>> invokeAll(final Collection<? extends Callable<T>> tasks, final long timeout, final TimeUnit unit) throws InterruptedException {
+				return executor.invokeAll(GfCollections.asArrayCollection(tasks).map(t->wrapRunnable(t, log)), timeout, unit);
+			}
+			@Override
+			public final <T> List<Future<T>> invokeAll(final Collection<? extends Callable<T>> tasks) throws InterruptedException {
+				return executor.invokeAll(GfCollections.asArrayCollection(tasks).map(t->wrapRunnable(t, log)));
+			}
+			@Override
+			public final boolean awaitTermination(final long timeout, final TimeUnit unit) throws InterruptedException {
+				return executor.awaitTermination(timeout, unit);
+			}
+			@Override
+			public final String toString() {
+				final StringBuilder sb = new StringBuilder(threadsDescriptor.length() + 50);
+				sb.append("[Thread factory: '").append(threadsDescriptor).append("'. Thread amount limit: ").append(threads).append("]");
+				return sb.toString();
+			}
+		};
+		logger.log(LogLevel.DEBUG, "Logged executor created: " + res.toString());
+		return res;
+	}
+	
 	public static final ExecutorService newLimitedCachedExecutorService(final int threadsCount, final ThreadFactory threadFactory) {
-		return new ThreadPoolExecutor(0, threadsCount,
-				60L, TimeUnit.SECONDS,
-				new SynchronousQueue<Runnable>(),
-				threadFactory);
+		return new ExecutorService() {
+			private final int threads = threadsCount;
+			private final String threadsDescriptor = threadFactory.toString();
+			private final ThreadPoolExecutor executor = new ThreadPoolExecutor(0, threads,
+					60L, TimeUnit.SECONDS,
+					new SynchronousQueue<Runnable>(),
+					threadFactory);
+			@Override
+			public final void execute(final Runnable command) {
+				executor.execute(command);
+			}
+			@Override
+			public final <T> Future<T> submit(final Runnable task, final T result) {
+				return executor.submit(task, result);
+			}
+			@Override
+			public final Future<?> submit(final Runnable task) {
+				return executor.submit(task);
+			}
+			@Override
+			public final <T> Future<T> submit(final Callable<T> task) {
+				return executor.submit(task);
+			}
+			@Override
+			public final List<Runnable> shutdownNow() {
+				return executor.shutdownNow();
+			}
+			@Override
+			public final void shutdown() {
+				executor.shutdown();
+			}
+			@Override
+			public final boolean isTerminated() {
+				return executor.isTerminated();
+			}
+			@Override
+			public final boolean isShutdown() {
+				return executor.isShutdown();
+			}
+			@Override
+			public final <T> T invokeAny(final Collection<? extends Callable<T>> tasks, 
+					final long timeout, 
+					final TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+				return executor.invokeAny(tasks, timeout, unit);
+			}
+			@Override
+			public final <T> T invokeAny(final Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException {
+				return executor.invokeAny(tasks);
+			}
+			@Override
+			public final <T> List<Future<T>> invokeAll(final Collection<? extends Callable<T>> tasks, final long timeout, final TimeUnit unit) throws InterruptedException {
+				return executor.invokeAll(tasks, timeout, unit);
+			}
+			@Override
+			public final <T> List<Future<T>> invokeAll(final Collection<? extends Callable<T>> tasks) throws InterruptedException {
+				return executor.invokeAll(tasks);
+			}
+			@Override
+			public final boolean awaitTermination(final long timeout, final TimeUnit unit) throws InterruptedException {
+				return executor.awaitTermination(timeout, unit);
+			}
+			@Override
+			public final String toString() {
+				final StringBuilder sb = new StringBuilder(threadsDescriptor.length() + 50);
+				sb.append("[Thread factory: '").append(threadsDescriptor).append("'. Thread amount limit: ").append(threads).append("]");
+				return sb.toString();
+			}
+		};
 	}
 	public static final ThreadFactory newThreadFactory(final ThreadPriority priority, final String threadNamePrefix) {
 		return new ThreadFactory() {
-			private final int p = convertPriority(priority);
+			private final ThreadPriority pr = priority;
+			private final String prefix = threadNamePrefix;
+			private final int p = convertPriority(pr);
 			@Override
 			public final Thread newThread(final Runnable r) {
-				final Thread t = new Thread(r, getThreadName(threadNamePrefix));
+				final Thread t = new Thread(r, getThreadName(prefix));
 				t.setPriority(p);
 				return t;
+			}
+			@Override
+			public final String toString() {
+				final StringBuilder sb = new StringBuilder(threadNamePrefix.length() + 40);
+				sb.append("[Thread name prefix:'").append(prefix).append("', priority:'").append(pr).append("']");
+				return sb.toString();
 			}
 		};
 	}
